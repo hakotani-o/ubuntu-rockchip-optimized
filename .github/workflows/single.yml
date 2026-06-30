@@ -36,6 +36,7 @@ jobs:
           cd build
           chmod +x *.sh
           ./main-control.sh $mesa_source
+          cd ..
 
       - name: Get current date
         id: date
