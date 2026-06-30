@@ -1,4 +1,4 @@
-name: v2-ubuntu-single-hardware-accelerator
+name: v1-clean-build
 on:
   workflow_dispatch:
    inputs:
