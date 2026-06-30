@@ -1,0 +1,79 @@
+name: v2-ubuntu-single-hardware-accelerator
+on:
+  workflow_dispatch:
+   inputs:
+      mesa_source:
+        description: 'Mesaのソースコードを選択'
+        required: true
+        default: 'upstream'
+        type: choice
+        options:
+          - upstream
+          - ubuntu
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: write  # これがリリース作成に必要
+
+jobs:
+  command:
+    name: Clean build disk images with Mesa for Rockchip
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+# 2. ローカルと共通のBASHスクリプトを実行   Mesa deb
+      - name: Build mesa package
+        env: 
+           mesa_source: ${{ github.event.inputs.mesa_source }}
+        run: |
+          mkdir -p build/overlay build/kernel build/image
+          cp *.sh build
+          cp my-add.txt build/overlay
+          cd build
+          chmod +x *.sh
+          ./main-control.sh $mesa_source
+
+      - name: Get current date
+        id: date
+        run: echo "now=$(date +'%Y-%m-%d %H:%M')" >> $GITHUB_OUTPUT
+
+      - name: Get kernel version
+        id: kernel
+        run: cat overlay/kernel_version >> $GITHUB_OUTPUT
+
+      - name: Mesa version
+        id: mesa
+        run: echo "release_mesa_info=$(cat overlay/rel.txt)" >> $GITHUB_OUTPUT
+        
+
+        # --- リリース直前にこれを追加 ---
+      - name: Fix file permissions
+        run: sudo chown -R runner:runner overlay/* kernel/* image/*
+        # ----------------------------
+      
+      - name: Create Release and Upload
+        uses: softprops/action-gh-release@v2
+        with:
+          # 実行するたびにユニークなタグ名（例: build-1, build-2...）を付けます
+          tag_name: build-${{ github.run_number }}
+          name: "Orange Pi 5 / 5 PLUS Disk Image Build ${{ github.run_number }}"
+          body: |
+            Orange Pi 5 / 5 PLUS ディスクイメージ with Mesa for Rockchip
+            ビルド日時: ${{ steps.date.outputs.now }}
+            ベースカーネル: ${{ steps.kernel.outputs.kernel_version }}
+            Mesa バージョン: ${{ steps.mesa.outputs.release_mesa_info }}
+          draft: false
+          prerelease: false
+          # ここに圧縮済みファイルのパスを指定します
+          files: |
+            ./Ubuntu-*img.xz 
+            ./*.bin
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+
