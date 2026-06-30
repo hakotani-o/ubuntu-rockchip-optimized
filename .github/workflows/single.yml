@@ -70,8 +70,8 @@ jobs:
           prerelease: false
           # ここに圧縮済みファイルのパスを指定します
           files: |
-            ./Ubuntu-*img.xz 
-            ./*.bin
+            ./build/image/Ubuntu-*img.xz 
+            ./build/overlat/*.bin
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
