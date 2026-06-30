@@ -10,7 +10,7 @@ Uri="http://ports.ubuntu.com/ubuntu-ports"
 
 	sudo rm -f log?
 	sudo ./build_kernel_env.sh orangepi-5-rk3588s_defconfig $Uri $suite kernel 2>&1|tee log0
-	sudo  ./mesa-build-env.sh arm64 upstream $Uri $suite 2>&1|tee log2
+	sudo  ./mesa-build-env.sh arm64 $1 $Uri $suite 2>&1|tee log2
 	#sudo  ./meas-build-env.sh arm64 ubuntu $Uri $suite 2>&1|tee log2
 	sudo  ./rootfs-bootstrap.sh arm64 $Uri $suite 2>&1|tee log3
 	sudo  ./disk_image.sh arm64 orangepi-5 rk3588s-orangepi-5 2>&1|tee log4
