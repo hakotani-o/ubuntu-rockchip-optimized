@@ -37,6 +37,12 @@ jobs:
           chmod +x *.sh
           ./main-control.sh $mesa_source
           cd ..
+          echo " ------------- overlay -------------------"
+          ls build/overlay/
+          echo " ------------- kernel --------------------"
+          ls build/kerlen/
+          echo " ------------ image ----------------------"
+          ls build/image/
 
       - name: Get current date
         id: date
