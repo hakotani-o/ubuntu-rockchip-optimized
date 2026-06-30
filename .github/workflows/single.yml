@@ -32,7 +32,7 @@ jobs:
         run: |
           mkdir -p build/overlay build/kernel build/image
           cp *.sh build
-          cp my-add.txt build/overlay
+          cp my-add.txt libdrm-amdgpu1.symbols.patch build/overlay
           cd build
           chmod +x *.sh
           ./main-control.sh $mesa_source
