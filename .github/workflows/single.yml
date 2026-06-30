@@ -43,11 +43,11 @@ jobs:
 
       - name: Get kernel version
         id: kernel
-        run: cat overlay/kernel_version >> $GITHUB_OUTPUT
+        run: cat ./build/overlay/kernel_version >> $GITHUB_OUTPUT
 
       - name: Mesa version
         id: mesa
-        run: echo "release_mesa_info=$(cat overlay/rel.txt)" >> $GITHUB_OUTPUT
+        run: echo "release_mesa_info=$(cat ./build/overlay/rel.txt)" >> $GITHUB_OUTPUT
         
 
         # --- リリース直前にこれを追加 ---
