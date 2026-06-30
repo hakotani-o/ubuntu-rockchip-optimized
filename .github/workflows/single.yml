@@ -40,7 +40,7 @@ jobs:
           echo " ------------- overlay -------------------"
           ls build/overlay/
           echo " ------------- kernel --------------------"
-          ls build/kerlen/
+          ls build/kernel/
           echo " ------------ image ----------------------"
           ls build/image/
 
