@@ -41,8 +41,8 @@ jobs:
           ls build/overlay/
           echo " ------------- kernel --------------------"
           ls build/kernel/
-          echo " ------------ image ----------------------"
-          ls build/image/
+          echo " ------------ images ----------------------"
+          ls build/images/
 
       - name: Get current date
         id: date
@@ -77,8 +77,8 @@ jobs:
           prerelease: false
           # ここに圧縮済みファイルのパスを指定します
           files: |
-            ./build/image/Ubuntu-*img.xz 
-            ./build/overlat/*.bin
+            ./build/images/Ubuntu-*img.xz 
+            ./build/overlay/*.bin
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
