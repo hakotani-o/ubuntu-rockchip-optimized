@@ -30,7 +30,7 @@ jobs:
         env: 
            mesa_source: ${{ github.event.inputs.mesa_source }}
         run: |
-          mkdir -p build/overlay build/kernel build/image
+          mkdir -p build/overlay build/kernel build/images
           cp *.sh build
           cp my-add.txt libdrm-amdgpu1.symbols.patch build/overlay
           cd build
