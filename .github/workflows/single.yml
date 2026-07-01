@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@v4
 
 # 2. ローカルと共通のBASHスクリプトを実行   Mesa deb
-      - name: Build mesa package
+      - name: Build all package and disk images
         env: 
            mesa_source: ${{ github.event.inputs.mesa_source }}
         run: |
