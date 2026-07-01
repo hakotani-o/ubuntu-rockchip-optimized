@@ -59,7 +59,7 @@ jobs:
 
         # --- リリース直前にこれを追加 ---
       - name: Fix file permissions
-        run: sudo chown -R runner:runner ./build/overlay/* ./build/kernel/* ./build/image/*
+        run: sudo chown -R runner:runner ./build/overlay/* ./build/kernel/* ./build/images/*
         # ----------------------------
       
       - name: Create Release and Upload
