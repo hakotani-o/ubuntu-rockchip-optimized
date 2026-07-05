@@ -165,7 +165,7 @@ EOF
 rm -f $1/var/lib/dbus/machine-id
 true > $1/etc/machine-id
 touch $1/var/log/syslog
-chown syslog:adm $1/var/log/syslog
+chown root:adm $1/var/log/syslog
 systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 ssh-keygen -A
 # debug
 echo "linux-version"
