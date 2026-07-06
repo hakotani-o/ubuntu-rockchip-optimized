@@ -51,11 +51,11 @@ rm -f arm64/etc/apt/sources.list
 
 echo "\n##################      systemd-nspawn  START   #######################\n"
 
-systemd-nspawn -D arm64 --resolv-conf=replace-host -E DEBIAN_FRONTEND=noninteractive --as-pid2 sudo apt-get clean
-systemd-nspawn -D arm64 --resolv-conf=replace-host -E DEBIAN_FRONTEND=noninteractive --as-pid2 sudo apt-get update
-systemd-nspawn -D arm64 --resolv-conf=replace-host -E DEBIAN_FRONTEND=noninteractive --as-pid2 sudo apt-get -y upgrade
-systemd-nspawn -D arm64 --resolv-conf=replace-host -E DEBIAN_FRONTEND=noninteractive --as-pid2 sudo apt-get -y dist-upgrade
-systemd-nspawn -D arm64 --resolv-conf=replace-host -E DEBIAN_FRONTEND=noninteractive --as-pid2 sudo apt-get -y install build-essential gcc-aarch64-linux-gnu bison \
+systemd-nspawn -D arm64 --resolv-conf=replace-host --as-pid2 sudo apt-get clean
+systemd-nspawn -D arm64 --resolv-conf=replace-host --as-pid2 sudo apt-get update
+systemd-nspawn -D arm64 --resolv-conf=replace-host --as-pid2 sudo apt-get -y upgrade
+systemd-nspawn -D arm64 --resolv-conf=replace-host --as-pid2 sudo apt-get -y dist-upgrade
+systemd-nspawn -D arm64 --resolv-conf=replace-host --as-pid2 sudo apt-get -y install build-essential gcc-aarch64-linux-gnu bison \
 debootstrap libssl-dev kmod cpio xz-utils fakeroot flex rsync \
 device-tree-compiler zstd python3 \
 python-is-python3 fdisk bc debhelper python3-pyelftools python3-setuptools \
@@ -63,8 +63,8 @@ python3-pkg-resources swig libfdt-dev libpython3-dev \
 git fakeroot build-essential ncurses-dev \
 libelf-dev libgnutls28-dev gcc-13 g++-13 libdw-dev
 
-systemd-nspawn -D arm64 --resolv-conf=replace-host -E DEBIAN_FRONTEND=noninteractive --as-pid2 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 13
-systemd-nspawn -D arm64 --resolv-conf=replace-host -E DEBIAN_FRONTEND=noninteractive --as-pid2 sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 13
+systemd-nspawn -D arm64 --resolv-conf=replace-host --as-pid2 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 13
+systemd-nspawn -D arm64 --resolv-conf=replace-host --as-pid2 sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 13
 
 echo "\n##################      systemd-nspawn  END     #######################\n"
 
