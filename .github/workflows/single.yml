@@ -25,12 +25,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install systemd-nspawn
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y systemd
-
-
 # 2. ローカルと共通のBASHスクリプトを実行   Mesa deb
       - name: Build all package and disk images
         env: 
@@ -56,21 +50,11 @@ jobs:
 
       - name: Get kernel version
         id: kernel
-        run: |
-          if [ -f ./build/overlay/kernel_version ]; then
-            cat ./build/overlay/kernel_version >> $GITHUB_OUTPUT
-          else
-            echo "kernel_version=Linux 7.1.x custom" >> $GITHUB_OUTPUT
-          fi
+        run: cat ./build/overlay/kernel_version >> $GITHUB_OUTPUT
 
       - name: Mesa version
         id: mesa
-        run: |
-          if [ -f ./build/overlay/rel.txt ]; then
-            echo "release_mesa_info=$(cat ./build/overlay/rel.txt)" >> $GITHUB_OUTPUT
-          else
-            echo "release_mesa_info=Mesa 26.0 Panthor" >> $GITHUB_OUTPUT
-          fi
+        run: echo "release_mesa_info=$(cat ./build/overlay/rel.txt)" >> $GITHUB_OUTPUT
         
 
         # --- リリース直前にこれを追加 ---
@@ -83,9 +67,10 @@ jobs:
         with:
           # 実行するたびにユニークなタグ名（例: build-1, build-2...）を付けます
           tag_name: build-${{ github.run_number }}
-          name: "Orange Pi 5 / 5 PLUS Disk Image Build ${{ github.run_number }}"
+          name: "Orange Pi 5 / 5 PLUS eMMC Disk Image Build ${{ github.run_number }}"
           body: |
-            Orange Pi 5 / 5 PLUS ディスクイメージ with Mesa for Rockchip
+            Orange Pi 5 / 5 PLUS eMMC ディスクイメージ with Mesa for Rockchip
+            U-Boot BOOT_TARGETS: mmc1 mmc0 nvme scsi (SDカード & eMMC 両対応)
             ビルド日時: ${{ steps.date.outputs.now }}
             ベースカーネル: ${{ steps.kernel.outputs.kernel_version }}
             Mesa バージョン: ${{ steps.mesa.outputs.release_mesa_info }}
