@@ -140,7 +140,7 @@ systemd-nspawn -D $1 \
   --setenv=DEBIAN_FRONTEND=noninteractive \
   --setenv=DEBCONF_NONINTERACTIVE_SEEN=true \
   /bin/bash -c "sudo apt-get -y install ubuntu-desktop-minimal gdm3 oem-config-gtk ubiquity-frontend-gtk ubiquity-slideshow-ubuntu yaru-theme-unity yaru-theme-icon yaru-theme-gtk"
-systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 /bin/bash -c "sudo apt-get install -y gstreamer1.0-plugins-bad gstreamer1.0-plugins-good gstreamer1.0-tools clapper mpv vulkan-tools mesa-utils"
+systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 /bin/bash -c "sudo apt-get install -y gstreamer1.0-plugins-bad gstreamer1.0-plugins-good gstreamer1.0-tools clapper mpv vulkan-tools mesa-vulkan-drivers"
 fi
 
 systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo apt-get -y purge cloud-init flash-kernel fwupd nano grub-efi-arm64
@@ -158,7 +158,17 @@ rm -f overlay/libgl1-mesa-dev_*.deb overlay/libgles2-mesa-dev_*.deb overlay/mesa
 rm -f overlay/mesa-opencl-icd_*.deb overlay/mesa-teflon-delegate_*.deb overlay/mesa-drm-shim_*.deb && \
 rm -f overlay/libdrm-tests_*.deb && cp overlay/*.deb $1/kkk && cp -r kernel $1/kkk
 
-systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo /bin/bash -c "sudo apt-get -y purge \$(dpkg --list | grep -Ei 'linux-image|linux-headers|linux-modules|linux-rockchip' | awk '{ print \$2 }')"
+systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo /bin/bash -c "sudo apt-get -y purge \$(dpkg --list | grep -Ei 'linux-image|linux-headers|linux-modules|linux-rockchip' | awk '{ print \$2 }') || true"
+
+# Install Mesa/DRM dependencies before installing custom packages
+systemd-nspawn -D $1 \
+  --resolv-conf=replace-host \
+  --as-pid2 \
+  --setenv=DEBIAN_FRONTEND=noninteractive \
+  --setenv=DEBCONF_NONINTERACTIVE_SEEN=true \
+  /bin/bash -c "sudo apt-get -y install libpciaccess0 libxcb-shm0 libxcb-xfixes0 libvulkan1 libxshmfence1 libxxf86vm1 libx11-6"
+
+# Now install custom deb packages with all dependencies available
 systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo /bin/bash -c "cd kkk && sudo dpkg -i *.deb && sudo dpkg -i kernel/*ondemand*.deb && sudo dpkg -i kernel/*conservative*.deb"
 
 
