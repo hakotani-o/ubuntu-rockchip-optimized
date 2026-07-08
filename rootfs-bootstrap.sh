@@ -141,6 +141,14 @@ systemd-nspawn -D $1 \
   --setenv=DEBCONF_NONINTERACTIVE_SEEN=true \
   /bin/bash -c "sudo apt-get -y install ubuntu-desktop-minimal gdm3 oem-config-gtk ubiquity-frontend-gtk ubiquity-slideshow-ubuntu yaru-theme-unity yaru-theme-icon yaru-theme-gtk"
 systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 /bin/bash -c "sudo apt-get install -y gstreamer1.0-plugins-bad gstreamer1.0-plugins-good gstreamer1.0-tools clapper mpv vulkan-tools mesa-vulkan-drivers"
+else
+# Server build: Install minimal Mesa/DRM support
+systemd-nspawn -D $1 \
+  --resolv-conf=replace-host \
+  --as-pid2 \
+  --setenv=DEBIAN_FRONTEND=noninteractive \
+  --setenv=DEBCONF_NONINTERACTIVE_SEEN=true \
+  /bin/bash -c "sudo apt-get -y install libgl1-mesa-glx mesa-vulkan-drivers libdrm2"
 fi
 
 systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo apt-get -y purge cloud-init flash-kernel fwupd nano grub-efi-arm64
