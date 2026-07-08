@@ -8,8 +8,8 @@ if [ "$(id -u)" -ne 0 ]; then
     exit 1
 fi
 set -x
-kernel=`ls kernel/linux*.deb 2>/dev/null | wc -l`
-if [ $kernel -lt 1 ]; then
+kernel=`ls kernel/linux*.deb|wc -l`
+if [ $kernel -ne 5 ]; then
 	echo "Build kernel first"
 	exit 1
 fi
@@ -120,8 +120,8 @@ systemd-nspawn -D $1 \
   --setenv=DEBIAN_FRONTEND=noninteractive \
   --setenv=DEBCONF_NONINTERACTIVE_SEEN=true \
   /bin/bash -c "echo 'kdump-tools kdump-tools/use_kdump boolean false' | debconf-set-selections && \
-  sudo apt-get -y install ubuntu-desktop-minimal gdm3 linux-firmware oem-config-gtk ubiquity-frontend-gtk ubiquity-slideshow-ubuntu yaru-theme-unity yaru-theme-icon yaru-theme-gtk aptdaemon initr[...]
-systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 /bin/bash -c "sudo apt-get install -y gstreamer1.0-plugins-bad gstreamer1.0-plugins-good gstreamer1.0-tools clapper mpv vulkan-tools mesa[...]
+  sudo apt-get -y install ubuntu-desktop-minimal gdm3 linux-firmware oem-config-gtk ubiquity-frontend-gtk ubiquity-slideshow-ubuntu yaru-theme-unity yaru-theme-icon yaru-theme-gtk aptdaemon initramfs-tools vim cloud-guest-utils e2fsprogs sudo"
+systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 /bin/bash -c "sudo apt-get install -y gstreamer1.0-plugins-bad gstreamer1.0-plugins-good gstreamer1.0-tools clapper mpv vulkan-tools mesa-utils"
 
 systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo apt-get -y purge cloud-init flash-kernel fwupd nano grub-efi-arm64
 
@@ -138,8 +138,8 @@ rm -f overlay/libgl1-mesa-dev_*.deb overlay/libgles2-mesa-dev_*.deb overlay/mesa
 rm -f overlay/mesa-opencl-icd_*.deb overlay/mesa-teflon-delegate_*.deb overlay/mesa-drm-shim_*.deb && \
 rm -f overlay/libdrm-tests_*.deb && cp overlay/*.deb $1/kkk && cp -r kernel $1/kkk
 
-systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo /bin/bash -c "sudo apt-get -y purge \$(dpkg --list | grep -Ei 'linux-image|linux-headers|linux-modules|linux-rockchip' | awk '{ prin[...]
-systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo /bin/bash -c "cd kkk && sudo dpkg -i *.deb && sudo dpkg -i kernel/*ondemand*.deb 2>/dev/null || true && sudo dpkg -i kernel/*conservative*.deb 2>/dev/null || true"
+systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo /bin/bash -c "sudo apt-get -y purge \$(dpkg --list | grep -Ei 'linux-image|linux-headers|linux-modules|linux-rockchip' | awk '{ print \$2 }')"
+systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo /bin/bash -c "cd kkk && sudo dpkg -i *.deb && sudo dpkg -i kernel/*ondemand*.deb && sudo dpkg -i kernel/*conservative*.deb"
 
 
 
