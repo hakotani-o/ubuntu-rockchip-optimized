@@ -25,6 +25,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install systemd-nspawn
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y systemd
+
+
 # 2. ローカルと共通のBASHスクリプトを実行   Mesa deb
       - name: Build all package and disk images
         env: 
