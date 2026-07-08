@@ -143,9 +143,9 @@ else
 	exit 1
 fi
 
-echo U_BOOT_FDT='"' "$fdt_name" '"' >> ${mount_point}/writable/etc/default/u-boot
-echo U_BOOT_FDT_DIR='"' "$dtbs_install_path" '"' >> ${mount_point}/writable/etc/default/u-boot
-echo U_BOOT_FDT_OVERLAYS_DIR='"' "$dtbs_install_path" '"' >> ${mount_point}/writable/etc/default/u-boot
+echo "U_BOOT_FDT=\"$fdt_name\"" >> ${mount_point}/writable/etc/default/u-boot
+echo "U_BOOT_FDT_DIR=\"$dtbs_install_path\"" >> ${mount_point}/writable/etc/default/u-boot
+echo "U_BOOT_FDT_OVERLAYS_DIR=\"$dtbs_install_path\"" >> ${mount_point}/writable/etc/default/u-boot
 # ★ 要启用 DT overlay，请取消下面一行的注释，
 #    并用逗号分隔指定要应用的 .dtbo 文件：
 #echo U_BOOT_FDT_OVERLAYS='"rockchip/rk3588-pwm1-pinmux.dtbo rockchip/rk3588-pwm-fan.dtbo"' >> ${mount_point}/writable/etc/default/u-boot
