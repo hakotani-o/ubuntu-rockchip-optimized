@@ -29,7 +29,7 @@ echo ""
 		fi
 
 	echo 'CONFIG_SYS_SOC="rk3588"' >> configs/$1
-sed -i 's/#ifndef CONFIG_XPL_BUILD/#ifndef CONFIG_XPL_BUILD\n\n #define BOOT_TARGETS    "nvme scsi"\n\n/' include/configs/rockchip-common.h
+sed -i 's/#ifndef CONFIG_XPL_BUILD/#ifndef CONFIG_XPL_BUILD\n\n #define BOOT_TARGETS    "mmc1 mmc0 nvme scsi"\n\n/' include/configs/rockchip-common.h
 
 		make clean $1
 		make -j8
