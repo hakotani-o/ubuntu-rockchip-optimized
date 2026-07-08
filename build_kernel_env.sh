@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# ディスクイメージを作成するために必要なツールをインストール
+# 安装创建磁盘镜像所需的工具
 sudo apt-get update && sudo apt-get -y install  systemd-container debootstrap
 
 rm -rf arm64

@@ -7,7 +7,7 @@ if [ "$(id -u)" -ne 0 ]; then
     echo "Please run as root"
     exit 1
 fi
-# ディスクイメージを作成するために必要なツールをインストール
+# 安装创建磁盘镜像所需的工具
 sudo apt-get update && sudo apt-get -y install  debootstrap systemd-container 
 
 #Bootstrap the system
@@ -91,9 +91,9 @@ echo "\n##################	systemd-nspawn	END	#######################\n"
 #echo "--------------- build-dep -y mesa end  ----------------------"
 
 
-echo "=== 1. Mesaソースコードの取得 ==="
+echo "=== 1. 获取 Mesa 源代码 ==="
 if [ "$2" == "upstream" ]; then
-    echo "freedesktop staging/26.0 から取得します..."
+    echo "从 freedesktop staging/26.0 获取..."
 	# mesa staging 26.0 version
 	cp staging_panthor_mesa.sh overlay/libdrm-amdgpu1.symbols.patch $1 && chmod +x $1/staging_panthor_mesa.sh
 	systemd-nspawn -D $1 --resolv-conf=replace-host -E DEBIAN_FRONTEND=noninteractive --as-pid2 /staging_panthor_mesa.sh

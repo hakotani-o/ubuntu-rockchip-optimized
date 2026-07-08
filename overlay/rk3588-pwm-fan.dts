@@ -1,0 +1,26 @@
+// SPDX-License-Identifier: GPL-2.0
+/dts-v1/;
+/plugin/;
+
+// =============================================================
+// RK3588 PWM 风扇消费者节点
+//
+// 此 overlay 创建 pwm-fan 设备。
+// 请根据实际风扇连接修改 pwms 引用：
+//
+//   Orange Pi 5 Plus  -> <&pwm1 0 50000 0>   (GPIO4_B2, PWM1_M0)
+//   Orange Pi 5       -> <&pwm1 0 50000 0>   (GPIO4_B2, PWM1_M0)
+//   Radxa ROCK 5B     -> <&pwm2 0 50000 0>   (GPIO3_B1, PWM2_M1)
+//
+// cooling-levels: 0(停止) 到 255(最大) 之间阶梯设置
+// =============================================================
+
+&{/} {
+    fan: pwm-fan {
+        compatible = "pwm-fan";
+        // ★ 请根据实际接线改为 pwm1 或 pwm2
+        pwms = <&pwm1 0 50000 0>;   // PWM1, period=50000ns(20kHz)
+        cooling-levels = <0 64 128 192 255>;
+        #cooling-cells = <2>;
+    };
+};

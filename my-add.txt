@@ -1,41 +1,41 @@
 # =============================================================
 # my-add.txt  --  OrangePi 5 / 5 Plus (RK3588S / RK3588)
-# Target : linux-7.x  (arm64, defconfig ベースに merge)
-# 用途   : デスクトップ/GUI、有線LAN、USB、HDMI/DP、PCIe/NVMe
+# Target : linux-7.x  (arm64, 基于 defconfig 合并)
+# 用途   : 桌面/GUI、有线LAN、USB、HDMI/DP、PCIe/NVMe
 # Usage  : ./scripts/kconfig/merge_config.sh -m .config my-add.txt
 # =============================================================
 
 
 # -------------------------------------------------------------
-# [1] ビルド全般
+# [1] 构建通用
 # -------------------------------------------------------------
 CONFIG_LOCALVERSION_AUTO=n
 CONFIG_VERSION_SIGNATURE=""
 CONFIG_EXPERT=y
 
-# ログバッファ（デスクトップ用途なので大きめ）
+# 日志缓冲区（桌面用途，设置较大）
 CONFIG_LOG_BUF_SHIFT=18
 CONFIG_LOG_CPU_MAX_BUF_SHIFT=17
 
-# モジュール圧縮（zstd推奨）
+# 模块压缩（推荐zstd）
 CONFIG_MODULE_COMPRESS=y
 CONFIG_MODULE_COMPRESS_ZSTD=y
 CONFIG_MODULE_COMPRESS_ALL=y
 CONFIG_MODULE_DECOMPRESS=y
 
-# インストールイメージ圧縮
+# 安装镜像压缩
 CONFIG_COMPRESSED_INSTALL=y
 
-# デバッグ情報は無効（ビルド高速化・サイズ削減）
-# ※ build スクリプト側で --set-val DEBUG_INFO_NONE y を実行済み想定
+# 调试信息无效（加速构建·缩减体积）
+# ※ build 脚本侧假定已执行 --set-val DEBUG_INFO_NONE y
 
 
 # -------------------------------------------------------------
-# [2] プラットフォーム：Rockchip のみ有効
+# [2] 平台：仅 Rockchip 有效
 # -------------------------------------------------------------
 CONFIG_ARCH_ROCKCHIP=y
 
-# 他アーキテクチャは全部無効（defconfig で入るものを明示的に除外）
+# 其他架构全部无效（明确排除 defconfig 中默认启用的）
 CONFIG_ARCH_ACTIONS=n
 CONFIG_ARCH_APPLE=n
 CONFIG_ARCH_BCM=n
@@ -86,7 +86,7 @@ CONFIG_ARCH_SYNQUACER=n
 
 
 # -------------------------------------------------------------
-# [3] CPU・スケジューラ
+# [3] CPU·调度器
 # -------------------------------------------------------------
 CONFIG_NR_CPUS=8
 CONFIG_HZ_300=y
@@ -94,34 +94,34 @@ CONFIG_HZ_300=y
 # -------------------------------------------------------------
 # [3.5] CPUFreq governor
 # -------------------------------------------------------------
-## CPU Governor について
-# デフォルトは `conservative`（バランス重視）です。
-# 用途に応じて変更できます：
+## 关于 CPU Governor
+# 默认使用 `conservative`（平衡优先）。
+# 可根据用途更改：
 
-# - **3D/ゲーム重視**: `ondemand`
-# - **動画再生/省電力重視**: `schedutil`
-# - **バランス**: `conservative`（デフォルト）
-# デスクトップ向け：ondemand よりも schedutil が応答性◎
-# ただし既存設定を踏襲する場合は ondemand のまま
+# - **3D/游戏优先**: `ondemand`
+# - **视频播放/省电优先**: `schedutil`
+# - **平衡**: `conservative`（默认）
+# 桌面用途：schedutil 响应性优于 ondemand
+# 但如果要沿袭现有配置，则保持 ondemand
 CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL=n
 CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=n
 CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE=n
 #CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE=y
 
-# XEN不要
+# 不需要 XEN
 CONFIG_XEN=n
 
-# ハイバネーション不要（デスクトップ用途でも省電力は suspend-to-RAM で十分）
+# 不需要休眠（桌面用途的省电只需 suspend-to-RAM 即可）
 CONFIG_HIBERNATION=n
 
-# ACPI parking protocol（マルチコアブート用、RK3588で有用）
+# ACPI parking protocol（用于多核启动，RK3588 有用）
 CONFIG_ARM64_ACPI_PARKING_PROTOCOL=y
 
 
 # -------------------------------------------------------------
-# [4] ファイルシステム
+# [4] 文件系统
 # -------------------------------------------------------------
-# SquashFS（snap等で使用）
+# SquashFS（snap 等使用）
 CONFIG_SQUASHFS_XATTR=y
 CONFIG_SQUASHFS_LZ4=y
 CONFIG_SQUASHFS_LZO=y
@@ -130,7 +130,7 @@ CONFIG_SQUASHFS_ZSTD=y
 CONFIG_SQUASHFS_4K_DEVBLK_SIZE=y
 CONFIG_SQUASHFS_EMBEDDED=y
 
-# FAT/exFAT/NTFS（USBストレージ等）
+# FAT/exFAT/NTFS（USB 存储等）
 CONFIG_VFAT_FS=y
 CONFIG_FAT_DEFAULT_UTF8=y
 CONFIG_MSDOS_FS=m
@@ -140,22 +140,19 @@ CONFIG_NTFS3_LZX_XPRESS=y
 CONFIG_NTFS3_FS_POSIX_ACL=y
 CONFIG_NTFS_FS=m
 
-# NFS 不要
-CONFIG_NETWORK_FILESYSTEMS=n
-CONFIG_NFS_FS=n
+# NFS（已恢复）
 
-# その他
+# 其他
 CONFIG_BINFMT_MISC=m
 CONFIG_PSTORE=y
 
 
 # -------------------------------------------------------------
-# [5] ネットワーク：有線LAN のみ
+# [5] 网络（WiFi/BT/IPv6/Netfilter 已恢复）
 # -------------------------------------------------------------
-# IPv4のみ（IPv6不要）
-CONFIG_IPV6=n
+# IPv4/IPv6（已恢复双栈）
 
-# 不要なネットワーク機能
+# 不需要的网络功能
 CONFIG_NET_IPIP=n
 CONFIG_NET_DSA=n
 CONFIG_IP_VS=n
@@ -166,19 +163,14 @@ CONFIG_NET_9P=n
 CONFIG_NFC=n
 CONFIG_WAN=n
 CONFIG_WWAN=n
-CONFIG_NETFILTER=n
+# Netfilter（已恢复）
 
-# WiFi / BT 完全無効
-CONFIG_WIRELESS=n
-CONFIG_CFG80211=n
-CONFIG_MAC80211=n
-CONFIG_RFKILL=n
-CONFIG_WLAN=n
-CONFIG_BT=n
+# WiFi / BT（已恢复，由defconfig默认启用）
+
 CONFIG_CAN=n
 
-# Netベンダー：Rockchip 有線関連のみ残す
-# （RK3588 は stmmac/dwmac 系 or RTL8211 PHY 経由が主流）
+# 网络设备商：仅保留 Rockchip 有线相关
+# （RK3588 主流通过 stmmac/dwmac 系列或 RTL8211 PHY）
 CONFIG_NET_VENDOR_3COM=n
 CONFIG_NET_VENDOR_ACTIONS=n
 CONFIG_NET_VENDOR_ADAPTEC=n
@@ -268,8 +260,8 @@ CONFIG_DWMAC_SUN8I=n
 CONFIG_DWMAC_IMX8=n
 CONFIG_PCS_XPCS=n
 
-# PHY：RTL8211 系のみ使用（RK3588 標準）
-# REALTEK PHY は NET_VENDOR_SYNOPSYS 経由で入るため個別指定不要だが念のため除外
+# PHY：仅使用 RTL8211 系列（RK3588 标配）
+# REALTEK PHY 通过 NET_VENDOR_SYNOPSYS 进入，不需单独指定但为防万一排除
 CONFIG_AQUANTIA_PHY=n
 CONFIG_AX88796B_PHY=n
 CONFIG_BCM54140_PHY=n
@@ -288,7 +280,7 @@ CONFIG_DP83869_PHY=n
 CONFIG_DP83TD510_PHY=n
 CONFIG_VITESSE_PHY=n
 
-# USB ネットアダプタ不要（有線オンボードで十分）
+# 不需要 USB 网络适配器（板载有线已足够）
 CONFIG_USB_PEGASUS=n
 CONFIG_USB_LAN78XX=n
 CONFIG_USB_NET_CDCETHER=n
@@ -311,24 +303,24 @@ CONFIG_USB_RTL8153_ECM=n
 CONFIG_USB_CONN_GPIO=m
 CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
 
-# ファームウェアローダー
+# 固件加载器
 CONFIG_FW_LOADER_COMPRESS=y
 CONFIG_FW_LOADER_COMPRESS_ZSTD=y
 
 # -------------------------------------------------------------
-# [6.5] ストレージ：AHCI / SATA（JMB582 PCIe→SATA）
+# [6.5] 存储：AHCI / SATA（JMB582 PCIe→SATA）
 # -------------------------------------------------------------
 CONFIG_ATA=y
-CONFIG_SATA_AHCI=y          # AHCI 標準ドライバ（JMB582はこれで動く）
-CONFIG_SATA_PMP=y           # Port Multiplier サポート
-CONFIG_SCSI=y               # AHCI が依存するSCSIレイヤー
-CONFIG_BLK_DEV_SD=y         # /dev/sda として見えるために必須
-CONFIG_ATA_SFF=n            # レガシーSFF 不要（既存設定と一致）
-CONFIG_PATA_PLATFORM=n      # PATA 不要（既存設定と一致）
+CONFIG_SATA_AHCI=y          # AHCI 标准驱动（JMB582 用这个即可）
+CONFIG_SATA_PMP=y           # 支持 Port Multiplier
+CONFIG_SCSI=y               # AHCI 依赖的 SCSI 层
+CONFIG_BLK_DEV_SD=y         # 必须，以 /dev/sda 形式出现
+CONFIG_ATA_SFF=n            # 不需要传统 SFF（与现有配置一致）
+CONFIG_PATA_PLATFORM=n      # 不需要 PATA（与现有配置一致）
 
 
 # -------------------------------------------------------------
-# [7] ディスプレイ・GPU（Rockchip DRM + Panthor）
+# [7] 显示器·GPU（Rockchip DRM + Panthor）
 # -------------------------------------------------------------
 CONFIG_DRM_ROCKCHIP=y
 CONFIG_ROCKCHIP_ANALOGIX_DP=y
@@ -339,13 +331,13 @@ CONFIG_ROCKCHIP_INNO_HDMI=y
 CONFIG_ROCKCHIP_LVDS=y
 CONFIG_ROCKCHIP_RGB=y
 
-# Mali GPU (Panthor = RK3588 の Malis G610)
+# Mali GPU (Panthor = RK3588 的 Mali G610)
 CONFIG_DRM_PANTHOR=m
 
-# HDMI 音声
+# HDMI 音频
 CONFIG_SND_SOC_HDMI_CODEC=m
 
-# 不要 DRM パネル
+# 不需要的 DRM 面板
 CONFIG_DRM_KOMEDA=n
 CONFIG_DRM_NOUVEAU=n
 CONFIG_DRM_PANEL_BOE_TV101WUM_NL6=n
@@ -361,9 +353,9 @@ CONFIG_DRM_PANEL_VISIONOX_VTDR6130=n
 
 
 # -------------------------------------------------------------
-# [8] メディア（Video4Linux / RGA / VDEC）
+# [8] 媒体（Video4Linux / RGA / VDEC）
 # -------------------------------------------------------------
-# デスクトップ用途でハードウェアデコード使用
+# 桌面用途，使用硬件解码
 CONFIG_MEDIA_SUPPORT=m
 CONFIG_MEDIA_PLATFORM_SUPPORT=y
 CONFIG_MEDIA_PLATFORM_DRIVERS=y
@@ -376,20 +368,20 @@ CONFIG_DVB_NET=n
 CONFIG_MEDIA_TUNER=n
 
 # -------------------------------------------------------------
-# Chromium ハードウェアデコード向け追加
+# 追加 Chromium 硬件解码支持
 # -------------------------------------------------------------
-CONFIG_VIDEO_ROCKCHIP_VDEC=m    # 既存：VPU デコーダー（H.264/H.265/VP9）
-CONFIG_ROCKCHIP_IOMMU=y         # VPU が DMA アクセスするために必須
-CONFIG_DMABUF_HEAPS=y           # バッファ共有（GPU↔VPU間）に必須
+CONFIG_VIDEO_ROCKCHIP_VDEC=m    # 现有：VPU 解码器（H.264/H.265/VP9）
+CONFIG_ROCKCHIP_IOMMU=y         # VPU DMA 访问所必需
+CONFIG_DMABUF_HEAPS=y           # 缓冲区共享（GPU↔VPU间）所必需
 CONFIG_DMABUF_HEAPS_SYSTEM=y    # 同上
 CONFIG_DMABUF_HEAPS_CMA=y       # 同上
-CONFIG_DMA_SHARED_BUFFER=y      # 同上の基盤
-CONFIG_MEDIA_CONTROLLER=y       # V4L2 メディアコントローラー
-CONFIG_VIDEO_V4L2_SUBDEV_API=y  # V4L2 サブデバイス API
+CONFIG_DMA_SHARED_BUFFER=y      # 同上基础
+CONFIG_MEDIA_CONTROLLER=y       # V4L2 媒体控制器
+CONFIG_VIDEO_V4L2_SUBDEV_API=y  # V4L2 子设备 API
 
 
 # -------------------------------------------------------------
-# [9] サウンド（ES8328 + HDMI）
+# [9] 音频（ES8328 + HDMI）
 # -------------------------------------------------------------
 CONFIG_SOUND=y
 CONFIG_SND=y
@@ -400,12 +392,12 @@ CONFIG_SND_SOC_ES8328=m
 CONFIG_SND_SOC_ES8328_I2C=m
 CONFIG_SND_SOC_ES8328_SPI=m
 
-# HD-Audio 不要（Rockchip は SoC内蔵 I2S/TDM で処理）
+# 不需要 HD-Audio（Rockchip 使用 SoC 内建 I2S/TDM 处理）
 CONFIG_SND_HDA=n
 CONFIG_SND_HDA_INTEL=n
 CONFIG_SND_HDA_CORE=n
 
-# 不要 SoC コーデック
+# 不需要的 SoC Codec
 CONFIG_SND_SOC_RT5514=n
 CONFIG_SND_SOC_RT5640=n
 CONFIG_SND_SOC_RT5645=n
@@ -451,7 +443,7 @@ CONFIG_SND_INTEL_SOUNDWIRE_ACPI=n
 
 
 # -------------------------------------------------------------
-# [10] セキュリティ（snap / AppArmor）
+# [10] 安全（snap / AppArmor）
 # -------------------------------------------------------------
 CONFIG_SECURITY=y
 CONFIG_SECURITY_APPARMOR=y
@@ -473,7 +465,7 @@ CONFIG_LEDS_TRIGGER_DEFAULT_ON=y
 
 
 # -------------------------------------------------------------
-# [12] 不要なサブシステム全般
+# [12] 不需要的子系统汇总
 # -------------------------------------------------------------
 CONFIG_MTD=n
 CONFIG_VFIO=n
@@ -484,21 +476,21 @@ CONFIG_CHROME_PLATFORMS=n
 CONFIG_SURFACE_PLATFORMS=n
 CONFIG_FTRACE=n
 
-# 入力（タッチ・ジョイスティック・タブレット不要）
+# 输入（不需要触摸/手柄/数位板）
 CONFIG_INPUT_JOYSTICK=n
 CONFIG_INPUT_TABLET=n
 CONFIG_INPUT_TOUCHSCREEN=n
 
-# シリアル（不要なコントローラ）
+# 串口（不需要的控制器）
 CONFIG_SERIAL_FSL_LPUART=n
 CONFIG_SERIAL_XILINX_PS_UART=n
 
-# I2C Mux（不要なもの）
+# I2C Mux（不需要的）
 CONFIG_I2C_MUX_PCA954x=n
 CONFIG_I2C_CADENCE=n
 CONFIG_SPI_CADENCE_QUADSPI=n
 
-# バッテリー・充電器（デスクトップ用途なので不要）
+# 电池·充电器（桌面用途，不需要）
 CONFIG_BATTERY_QCOM_BATTMGR=n
 CONFIG_BATTERY_BQ27XXX=n
 CONFIG_BATTERY_MAX17042=n
@@ -508,14 +500,9 @@ CONFIG_CHARGER_BQ25890=n
 CONFIG_CHARGER_BQ25980=n
 CONFIG_ACPI_BATTERY=n
 
-# センサー（不要）
-CONFIG_SENSORS_JC42=n
-CONFIG_SENSORS_LM75=n
-CONFIG_SENSORS_LM90=n
-CONFIG_SENSORS_INA2XX=n
-CONFIG_SENSORS_INA3221=n
+# 传感器（已恢复）
 
-# MFD（不要なPMIC）
+# MFD（不需要的PMIC）
 CONFIG_MFD_BD9571MWV=n
 CONFIG_MFD_AXP20X=n
 CONFIG_MFD_DA9062=n
@@ -529,7 +516,7 @@ CONFIG_MFD_WCD934X=n
 CONFIG_MFD_MAX77759=n
 CONFIG_MFD_SEC_ACPM=n
 
-# レギュレータ（不要）
+# 调压器（不需要）
 CONFIG_REGULATOR_AXP20X=n
 CONFIG_REGULATOR_BD9571MWV=n
 CONFIG_REGULATOR_DA9211=n
@@ -552,12 +539,12 @@ CONFIG_REGULATOR_RAA215300=n
 CONFIG_REGULATOR_TPS65132=n
 CONFIG_REGULATOR_TPS6594=n
 
-# ピンコントロール（不要なもの）
+# 引脚控制（不需要的）
 CONFIG_PINCTRL_DA9062=n
 CONFIG_PINCTRL_TPS6594=n
 CONFIG_PINCTRL_RP1=n
 
-# RTC（不要：RK3588 内蔵RTC を使用）
+# RTC（不需要：使用 RK3588 内建 RTC）
 CONFIG_RTC_DRV_DS1307=n
 CONFIG_RTC_DRV_HYM8563=n
 CONFIG_RTC_DRV_ISL1208=n
@@ -573,7 +560,7 @@ CONFIG_RTC_DRV_PCF2127=n
 CONFIG_RTC_DRV_PCF85063=n
 CONFIG_RTC_DRV_S32G=n
 
-# その他不要
+# 其他不需要
 CONFIG_SOC_RENESAS=n
 CONFIG_SCSI_LOWLEVEL=n
 CONFIG_ATA_SFF=n
@@ -594,3 +581,26 @@ CONFIG_INPUT_TPS65219_PWRBUTTON=n
 CONFIG_INPUT_PWM_BEEPER=n
 CONFIG_INPUT_PWM_VIBRA=n
 CONFIG_INPUT_DA9063_ONKEY=n
+
+
+# -------------------------------------------------------------
+# [13] PWM & 风扇控制
+# -------------------------------------------------------------
+# PWM 框架
+CONFIG_PWM=y
+CONFIG_PWM_SYSFS=y
+
+# Rockchip PWM 控制器
+CONFIG_PWM_ROCKCHIP=y
+# CONFIG_PWM_ROCKCHIP_V4 is not set
+
+# PWM FAN 驱动（通过hwmon）
+CONFIG_SENSORS_PWM_FAN=m
+
+# 通用 GPIO FAN（备用）
+CONFIG_SENSORS_GPIO_FAN=m
+
+# 热管理（PWM FAN 可能依赖）
+CONFIG_THERMAL=y
+CONFIG_THERMAL_GOV_STEP_WISE=y
+CONFIG_THERMAL_GOV_USER_SPACE=y

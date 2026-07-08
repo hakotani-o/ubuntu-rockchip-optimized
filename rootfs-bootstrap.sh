@@ -124,8 +124,8 @@ systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo add-apt-repositor
 systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo apt-get update
 systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo apt-get -y dist-upgrade
 fi
-# もし他のパッケージでも同じように止まった場合は同じパターンで：
-# echo 'パッケージ名 パッケージ名/質問キー boolean false' | debconf-set-selections
+# 如果其他软件包也以相同方式卡住，使用相同模式：
+# echo '包名 包名/问题键 boolean false' | debconf-set-selections
 systemd-nspawn -D $1 \
   --resolv-conf=replace-host \
   --as-pid2 \

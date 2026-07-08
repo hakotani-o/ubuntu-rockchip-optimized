@@ -143,9 +143,12 @@ else
 	exit 1
 fi
 
-echo U_BOOT_FDT='"'"$fdt_name"'"' >> ${mount_point}/writable/etc/default/u-boot
-echo U_BOOT_FDT_DIR='"'"$dtbs_install_path"'"' >> ${mount_point}/writable/etc/default/u-boot
-#echo U_BOOT_FDT_OVERLAYS_DIR='"/usr/lib/linux-image-"' >> ${mount_point}/writable/etc/default/u-boot
+echo U_BOOT_FDT='"' "$fdt_name" '"' >> ${mount_point}/writable/etc/default/u-boot
+echo U_BOOT_FDT_DIR='"' "$dtbs_install_path" '"' >> ${mount_point}/writable/etc/default/u-boot
+echo U_BOOT_FDT_OVERLAYS_DIR='"' "$dtbs_install_path" '"' >> ${mount_point}/writable/etc/default/u-boot
+# ★ 要启用 DT overlay，请取消下面一行的注释，
+#    并用逗号分隔指定要应用的 .dtbo 文件：
+#echo U_BOOT_FDT_OVERLAYS='"rockchip/rk3588-pwm1-pinmux.dtbo rockchip/rk3588-pwm-fan.dtbo"' >> ${mount_point}/writable/etc/default/u-boot
 
 mountpoint="${mount_point}/writable"
 
@@ -155,22 +158,22 @@ mount proc-live -t proc "$mountpoint/proc"
 mount sysfs-live -t sysfs "$mountpoint/sys"
 mount securityfs -t securityfs "$mountpoint/sys/kernel/security"
 
-# ==================== ★【確定版】自作自動拡張サービスをchroot内に仕込む ====================
-echo "仕込み中: Ubuntu 26.04 用自動拡張サービス"
+# ==================== 【正式版】将自制自动扩容服务注入chroot ====================
+echo "注入中: Ubuntu 26.04 自动扩容服务"
 chroot ${mount_point}/writable/ /bin/bash -c "
-# 1. まずAPTリポジトリを更新し、正しいパッケージ名（e2fsprogs）でインストール
+# 1. 首先更新APT仓库，安装正确的包名（e2fsprogs）
 # apt-get update
 # apt-get install -y cloud-guest-utils e2fsprogs
 
-# 2. 自動拡張設定スクリプト本体の作成
+# 2. 创建自动扩容配置脚本主体
 cat << 'EOF' > /usr/local/bin/firstboot-growroot.sh
 #!/bin/bash
-# ログファイルに出力をすべてリダイレクト
+# 将所有输出重定向到日志文件
 exec > /var/log/firstboot-growroot.log 2>&1
 
 echo \"=== Starting RootFS Auto Grow ===\"
 
-# ルートマウント元のデバイスとパーティション番号を取得
+# 获取根挂载源设备和分区号
 ROOT_DEV=\$(findmnt -n -o SOURCE /)
 DEV=\$(lsblk -no PKNAME \"\${ROOT_DEV}\")
 PART=\$(echo \"\${ROOT_DEV}\" | grep -o '[0-9]*\$')
@@ -183,25 +186,25 @@ fi
 DEV_PATH=\"/dev/\${DEV}\"
 echo \"Target Device: \${DEV_PATH}, Partition: \${PART}\"
 
-# パーティション拡張
+# 扩展分区
 growpart \"\${DEV_PATH}\" \"\${PART}\"
 
-# カーネルへパーティション変更の通知
+# 将分区变更通知内核
 partx -u \"\${ROOT_DEV}\"
 
-# オンラインリサイズ実行 (e2fsprogsのresize2fsを使用)
+# 执行在线扩容 (使用e2fsprogs的resize2fs)
 resize2fs \"\${ROOT_DEV}\"
 
 echo \"=== RootFS Auto Grow Completed ===\"
 
-# 自身を無効化して次回から動かさない（自爆）
+# 禁用自身，下次启动不再运行（自毁）
 systemctl disable firstboot-growroot.service
 EOF
 
-# 実行権限の付与
+# 赋予执行权限
 chmod +x /usr/local/bin/firstboot-growroot.sh
 
-# 3. systemd サービスファイルの作成
+# 3. 创建 systemd 服务文件
 cat << 'EOF' > /etc/systemd/system/firstboot-growroot.service
 [Unit]
 Description=First Boot Root Partition Resizer
@@ -217,7 +220,7 @@ RemainAfterExit=yes
 WantedBy=multi-user.target
 EOF
 
-# サービスの有効化
+# 启用服务
 systemctl enable firstboot-growroot.service
 "
 # ====================================================================================

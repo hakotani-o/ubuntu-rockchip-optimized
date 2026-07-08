@@ -1,0 +1,18 @@
+// SPDX-License-Identifier: GPL-2.0
+/dts-v1/;
+/plugin/;
+
+// =============================================================
+// Orange Pi 5 Plus 风扇用 PWM1-M0 引脚复用启用
+// 
+// GPIO4_B2 (PWM1_M0) = Orange Pi 5 Plus 风扇接口
+// 其他板子请更换对应PWM通道：
+//   Orange Pi 5 (非Plus): 通常 PWM1_M0 (GPIO4_B2) 或 PWM2_M1
+//   Radxa ROCK 5B    : PWM2_M1 (GPIO3_B1)
+// =============================================================
+
+&pwm1 {
+    pinctrl-0 = <&pwm1m0_pins>;
+    pinctrl-names = "default";
+    status = "okay";
+};
