@@ -10,14 +10,6 @@ on:
         options:
           - upstream
           - ubuntu
-      build_type:
-        description: 'Build type (desktop or server)'
-        required: true
-        default: 'desktop'
-        type: choice
-        options:
-          - desktop
-          - server
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -26,18 +18,20 @@ permissions:
   contents: write
 
 jobs:
-  command:
-    name: Clean build disk images with Mesa for Rockchip
+  build:
+    name: Build ${{ matrix.build_type }}
+    strategy:
+      matrix:
+        build_type: [desktop, server]
     runs-on: ubuntu-24.04-arm
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-# 2. Build all packages and disk images
-      - name: Build all package and disk images
+      - name: Build ${{ matrix.build_type }} image
         env: 
            mesa_source: ${{ github.event.inputs.mesa_source }}
-           build_type: ${{ github.event.inputs.build_type }}
+           build_type: ${{ matrix.build_type }}
         run: |
           # Fix CRLF line endings from Windows (otherwise #!/bin/bash\r won't be found)
           sed -i 's/\r$//' *.sh
@@ -54,10 +48,11 @@ jobs:
           ls build/kernel/
           echo " ------------ images ----------------------"
           ls build/images/
-
-      - name: Get current date
-        id: date
-        run: echo "now=$(date +'%Y-%m-%d %H:%M')" >> $GITHUB_OUTPUT
+          # 在镜像文件名中标记 build type
+          for f in build/images/Ubuntu-*.img.xz; do
+            newname="$(echo $f | sed 's/\.img\.xz$/-'"$build_type"'.img.xz/')"
+            mv "$f" "$newname"
+          done
 
       - name: Get kernel version
         id: kernel
@@ -66,32 +61,72 @@ jobs:
       - name: Mesa version
         id: mesa
         run: echo "release_mesa_info=$(cat ./build/overlay/rel.txt)" >> $GITHUB_OUTPUT
-        
 
-        # Fix file permissions before release
       - name: Fix file permissions
         run: sudo chown -R runner:runner ./build/overlay/* ./build/kernel/* ./build/images/*
-      
+
+      - name: Upload images artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: images-${{ matrix.build_type }}
+          path: ./build/images/Ubuntu-*.img.xz
+
+      - name: Upload u-boot (desktop only)
+        if: matrix.build_type == 'desktop'
+        uses: actions/upload-artifact@v4
+        with:
+          name: u-boot
+          path: ./build/overlay/*.bin
+
+      - name: Upload version info (desktop only)
+        if: matrix.build_type == 'desktop'
+        uses: actions/upload-artifact@v4
+        with:
+          name: version-info
+          path: |
+            ./build/overlay/kernel_version
+            ./build/overlay/rel.txt
+
+  release:
+    needs: build
+    name: Create Release
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Get current date
+        id: date
+        run: echo "now=$(date +'%Y-%m-%d %H:%M')" >> $GITHUB_OUTPUT
+
+      - name: Get kernel version from artifact
+        id: kernel
+        run: cat ./version-info/kernel_version >> $GITHUB_OUTPUT
+
+      - name: Mesa version from artifact
+        id: mesa
+        run: echo "release_mesa_info=$(cat ./version-info/rel.txt)" >> $GITHUB_OUTPUT
+
       - name: Create Release and Upload
         uses: softprops/action-gh-release@v2
         with:
-          # Unique tag per run (e.g. build-1, build-2...)
           tag_name: build-${{ github.run_number }}
           name: "Orange Pi 5 / 5 PLUS eMMC Disk Image Build ${{ github.run_number }}"
           body: |
             Orange Pi 5 / 5 PLUS eMMC disk image with Mesa for Rockchip
+
+            **Desktop** — GNOME 桌面环境，含 Firefox/Thunderbird/Chromium PPA 支持
+            **Server** — 纯命令行，最小化安装
+
             U-Boot BOOT_TARGETS: mmc1 mmc0 nvme scsi (SD card & eMMC)
             Build date: ${{ steps.date.outputs.now }}
             Kernel: ${{ steps.kernel.outputs.kernel_version }}
             Mesa: ${{ steps.mesa.outputs.release_mesa_info }}
           draft: false
           prerelease: false
-          # Compressed image path
           files: |
-            ./build/images/Ubuntu-*img.xz 
-            ./build/overlay/*.bin
+            ./images-desktop/*.img.xz
+            ./images-server/*.img.xz
+            ./u-boot/*.bin
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
-
