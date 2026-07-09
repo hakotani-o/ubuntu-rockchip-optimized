@@ -155,7 +155,7 @@ systemd-nspawn -D $1 \
   /bin/bash -c "sudo apt-get -y install libgl1 mesa-vulkan-drivers libdrm2"
 fi
 
-systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo apt-get -y purge cloud-init flash-kernel fwupd nano grub-efi-arm64 snapd
+systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo apt-get -y purge cloud-init flash-kernel fwupd nano grub-efi-arm64
 
 systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo apt-get update
 systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo apt-get -y upgrade
