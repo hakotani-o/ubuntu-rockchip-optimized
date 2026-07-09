@@ -148,7 +148,7 @@ systemd-nspawn -D $1 \
   --as-pid2 \
   --setenv=DEBIAN_FRONTEND=noninteractive \
   --setenv=DEBCONF_NONINTERACTIVE_SEEN=true \
-  /bin/bash -c "sudo apt-get -y install libgl1-mesa-glx mesa-vulkan-drivers libdrm2"
+  /bin/bash -c "sudo apt-get -y install libgl1 mesa-vulkan-drivers libdrm2"
 fi
 
 systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo apt-get -y purge cloud-init flash-kernel fwupd nano grub-efi-arm64
