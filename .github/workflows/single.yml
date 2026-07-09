@@ -49,9 +49,16 @@ jobs:
           echo " ------------ images ----------------------"
           ls build/images/
           # 在镜像文件名中标记 build type
-          for f in build/images/Ubuntu-*.img.xz; do
-            newname="$(echo $f | sed 's/\.img\.xz$/-'"$build_type"'.img.xz/')"
+          shopt -s nullglob
+          images=(build/images/Ubuntu-*.img.xz)
+          if [ ${#images[@]} -eq 0 ]; then
+            echo "ERROR: 未找到磁盘镜像！构建可能失败。"
+            exit 1
+          fi
+          for f in "${images[@]}"; do
+            newname="${f%.img.xz}-$build_type.img.xz"
             mv "$f" "$newname"
+            echo "Renamed: $(basename "$f") -> $(basename "$newname")"
           done
 
       - name: Get kernel version
