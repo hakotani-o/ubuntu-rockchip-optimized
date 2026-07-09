@@ -13,8 +13,8 @@
 	};
 };
 
-// 温控曲线（30°C 起转），路径引用兼容不同内核版本的标签名
-&{/thermal-zones/soc-thermal} {
+// 温控曲线（30°C 起转），绑定到 SoC 封装温度
+&{/thermal-zones/package-thermal} {
 	trips {
 		soc_fan_trip0: fan-trip0 {
 			temperature = <30000>;		// 30°C — 起转
