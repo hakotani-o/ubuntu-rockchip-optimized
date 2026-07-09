@@ -46,7 +46,7 @@ jobs:
           sed -i 's/\r$//' *.sh
           mkdir -p build/overlay build/kernel build/images
           cp *.sh build
-          cp my-add.txt libdrm-amdgpu1.symbols.patch build/overlay
+          cp my-add.txt libdrm-amdgpu1.symbols.patch overlay/rk3588-pwm-fan.dtsi build/overlay
           cd build
           chmod +x *.sh
           BUILD_TYPE=$build_type ./main-control.sh $mesa_source

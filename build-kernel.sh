@@ -14,6 +14,9 @@ git clone --depth 1 https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux
 
 cd linux
 cp /my-add.txt .
+# 将 PWM 风扇节点写入设备树
+cp /rk3588-pwm-fan.dtsi arch/arm64/boot/dts/rockchip/
+echo '#include "rk3588-pwm-fan.dtsi"' >> arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
 kernel_para=$2
 echo "kernel_para=${kernel_para}"
 sed -i "s/$kernel_para\=n/$kernel_para\=y/" my-add.txt

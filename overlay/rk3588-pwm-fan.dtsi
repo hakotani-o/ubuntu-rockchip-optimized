@@ -1,0 +1,14 @@
+&pwm1 {
+	pinctrl-0 = <&pwm1m0_pins>;
+	pinctrl-names = "default";
+	status = "okay";
+};
+
+&{/} {
+	fan: pwm-fan {
+		compatible = "pwm-fan";
+		pwms = <&pwm1 0 50000 0>;
+		cooling-levels = <0 64 128 192 255>;
+		#cooling-cells = <2>;
+	};
+};
