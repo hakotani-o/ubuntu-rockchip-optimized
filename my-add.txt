@@ -24,6 +24,9 @@ CONFIG_LOG_BUF_SHIFT=18
 CONFIG_ARCH_ROCKCHIP=y
 CONFIG_NR_CPUS=8
 
+# Governor（由 build-kernel.sh 的 sed 动态切换，必须保留 =n 行作为锚点）
+CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=n
+
 
 # -------------------------------------------------------------
 # [3] 文件系统
