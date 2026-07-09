@@ -1,4 +1,6 @@
 #!/bin/bash
+set -eE
+trap 'echo "Error in $0 on line $LINENO"' ERR
 
 # 安装创建磁盘镜像所需的工具
 sudo apt-get update && sudo apt-get -y install  systemd-container debootstrap
