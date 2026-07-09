@@ -36,7 +36,9 @@ make olddefconfig
 cp .config /2-config.txt
 
 # systemd-nspawn 内 fakeroot 不稳定，改为不需要 root 的打包方式
-DEB_RULES_REQUIRES_ROOT=no make -j$(nproc) LOCALVERSION="-${kernel_name,,}" bindeb-pkg
+# 编译并行，打包串行（避免 dtbs_install 竞争目录）
+make -j$(nproc) LOCALVERSION="-${kernel_name,,}"
+MAKEFLAGS=-j1 DEB_RULES_REQUIRES_ROOT=no make LOCALVERSION="-${kernel_name,,}" bindeb-pkg
 cd ..
 cp *.deb /
 
