@@ -40,6 +40,7 @@ jobs:
         env: 
            mesa_source: ${{ github.event.inputs.mesa_source }}
            build_type: ${{ matrix.build_type }}
+           FAKEROOTD_SILENT: 1
         run: |
           set -euxo pipefail
           # Fix CRLF line endings from Windows (otherwise #!/bin/bash\r won't be found)

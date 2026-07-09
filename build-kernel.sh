@@ -35,8 +35,8 @@ make defconfig
 make olddefconfig
 cp .config /2-config.txt
 
-# make deb-pkg 内部已处理 fakeroot，外层不需要再套
-make -j$(nproc) LOCALVERSION="-${kernel_name,,}" deb-pkg
+# fakeroot 警告无害，抑制即可；不能去掉，deb 打包需要它
+fakeroot make -j$(nproc) LOCALVERSION="-${kernel_name,,}" deb-pkg
 cd ..
 cp *.deb /
 
