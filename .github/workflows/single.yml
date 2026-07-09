@@ -40,6 +40,8 @@ jobs:
         env: 
            mesa_source: ${{ github.event.inputs.mesa_source }}
            build_type: ${{ matrix.build_type }}
+           DEBIAN_FRONTEND: noninteractive
+           DEBCONF_NOWARNINGS: yes
            FAKEROOTD_SILENT: 1
         run: |
           set -euxo pipefail
