@@ -35,7 +35,9 @@ make defconfig
 make olddefconfig
 cp .config /2-config.txt
 
-# fakeroot 警告无害，抑制即可；不能去掉，deb 打包需要它
+# fakeroot 警告无害，但不能去掉（deb 打包需要）
+export FAKEROOT_ALLOW_FSYNC=1
+export FAKEROOT_SKIP_RPC=1
 fakeroot make -j$(nproc) LOCALVERSION="-${kernel_name,,}" deb-pkg
 cd ..
 cp *.deb /
