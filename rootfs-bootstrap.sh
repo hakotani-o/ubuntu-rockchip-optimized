@@ -9,7 +9,7 @@ if [ "$(id -u)" -ne 0 ]; then
 fi
 set -x
 kernel=`ls kernel/linux*.deb|wc -l`
-if [ $kernel -ne 5 ]; then
+if [ $kernel -lt 4 ]; then
 	echo "Build kernel first"
 	exit 1
 fi
@@ -181,7 +181,7 @@ systemd-nspawn -D $1 \
   /bin/bash -c "sudo apt-get -y install libpciaccess0 libxcb-shm0 libxcb-xfixes0 libvulkan1 libxshmfence1 libxxf86vm1 libx11-6"
 
 # Now install custom deb packages with all dependencies available
-systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo /bin/bash -c "cd kkk && sudo dpkg -i *.deb && sudo dpkg -i kernel/*ondemand*.deb && sudo dpkg -i kernel/*conservative*.deb"
+systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo /bin/bash -c "cd kkk && sudo dpkg -i *.deb && sudo dpkg -i kernel/*.deb"
 
 
 

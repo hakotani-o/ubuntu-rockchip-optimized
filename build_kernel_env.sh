@@ -94,14 +94,6 @@ cp overlay/my-add.txt arm64
 cp overlay/rk3588-pwm-fan.dtsi arm64
 chmod +x arm64/build-kernel.sh
 
-# CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE
-systemd-nspawn -D arm64 \
-  --resolv-conf=replace-host \
-  --as-pid2 \
-  --setenv=DEBIAN_FRONTEND=noninteractive \
-  --setenv=DEBCONF_NONINTERACTIVE_SEEN=true \
-/bin/bash -c "./build-kernel.sh kernel CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
-
 # CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND
 systemd-nspawn -D arm64 \
   --resolv-conf=replace-host \
