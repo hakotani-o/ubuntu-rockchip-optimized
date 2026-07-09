@@ -17,7 +17,8 @@ echo ""
 echo "export ROCKCHIP_TPL=$ROCKCHIP_TPL"
 echo "export BL31=$BL31"
 echo ""
-		export PATH=`pwd`/tools/binman:$PATH
+		# U-Boot Makefile 自行处理 binman，无需手动设置 PATH
+#export PATH=`pwd`/tools/binman:$PATH
 echo ""
 echo "PATH=$PATH"
 echo ""

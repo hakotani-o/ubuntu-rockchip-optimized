@@ -27,7 +27,7 @@ export  LANG=C
 
 #Setup DNS
 echo "127.0.0.1 localhost" > arm64/etc/hosts
-echo "127.0.0.1 ubuntu-desktop" > arm64/etc/hosts
+echo "127.0.0.1 ubuntu-desktop" >> arm64/etc/hosts
 echo "nameserver 8.8.8.8" > arm64/etc/resolv.conf
 echo "nameserver 8.8.4.4" >> arm64/etc/resolv.conf
 
