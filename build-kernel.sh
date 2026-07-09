@@ -35,7 +35,8 @@ make defconfig
 make olddefconfig
 cp .config /2-config.txt
 
-fakeroot make -j$(nproc) LOCALVERSION="-${kernel_name,,}"  deb-pkg
+# make deb-pkg 内部已处理 fakeroot，外层不需要再套
+make -j$(nproc) LOCALVERSION="-${kernel_name,,}" deb-pkg
 cd ..
 cp *.deb /
 
