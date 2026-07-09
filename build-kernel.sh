@@ -35,10 +35,8 @@ make defconfig
 make olddefconfig
 cp .config /2-config.txt
 
-# fakeroot 警告无害，但不能去掉（deb 打包需要）
-export FAKEROOT_ALLOW_FSYNC=1
-export FAKEROOT_SKIP_RPC=1
-fakeroot make -j$(nproc) LOCALVERSION="-${kernel_name,,}" deb-pkg
+# systemd-nspawn 内 fakeroot 不稳定，改为不需要 root 的打包方式
+DEB_RULES_REQUIRES_ROOT=no make -j$(nproc) LOCALVERSION="-${kernel_name,,}" bindeb-pkg
 cd ..
 cp *.deb /
 
