@@ -56,6 +56,10 @@ echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg"
 } > $1/etc/apt/sources.list.d/ubuntu.sources
 rm -f $1/etc/apt/sources.list
 
+# APT 重试配置（防止 CI 网络瞬断）
+mkdir -p $1/etc/apt/apt.conf.d
+echo 'Acquire::Retries "5";' > $1/etc/apt/apt.conf.d/99-retries
+
 echo "\n##################	systemd-nspawn	START	#######################\n"
 
 systemd-nspawn -D $1 --resolv-conf=replace-host -E DEBIAN_FRONTEND=noninteractive --as-pid2 sudo apt-get clean
