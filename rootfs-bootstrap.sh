@@ -8,9 +8,9 @@ if [ "$(id -u)" -ne 0 ]; then
     exit 1
 fi
 set -x
-kernel=`ls kernel/linux*.deb|wc -l`
-if [ $kernel -lt 4 ]; then
-	echo "Build kernel first"
+kernel=`ls kernel/linux*.deb 2>/dev/null | wc -l`
+if [ $kernel -lt 3 ]; then
+	echo "Build kernel first (expected >=3, got $kernel)"
 	exit 1
 fi
 
