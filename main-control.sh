@@ -5,7 +5,7 @@ trap 'echo "Error in $0 on line $LINENO"' ERR
 #suite=plucky
 suite=resolute
 #Uri="http://ftp.udx.icscoe.jp/Linux/ubuntu-ports/"
-Uri="http://ports.ubuntu.com/ubuntu-ports"
+Uri="https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports"
 
 # BUILD_TYPE: "desktop" (default) or "server"
 # Set via environment: BUILD_TYPE=server sudo ./main-control.sh ...
