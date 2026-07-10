@@ -50,19 +50,30 @@ if [ "$build_type" = "desktop" ]; then
 else
 	echo "ubuntu-server" > $1/etc/hostname
 fi
+# 镜像内系统使用清华源
 {
 echo "Types: deb"
-echo "URIs: $Uri"
+echo "URIs: https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports"
 echo "Suites: $suite $suite-updates $suite-backports"
-echo "Components: main universe restricted multiverse"
+echo "Components: main restricted universe multiverse"
 echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg"
 echo ""
-echo "## Ubuntu security updates. Aside from URIs and Suites,"
-echo "## this should mirror your choices in the previous section."
+echo "Types: deb-src"
+echo "URIs: https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports"
+echo "Suites: $suite $suite-updates $suite-backports"
+echo "Components: main restricted universe multiverse"
+echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg"
+echo ""
 echo "Types: deb"
-echo "URIs: $Uri"
+echo "URIs: https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports"
 echo "Suites: $suite-security"
-echo "Components: main universe restricted multiverse"
+echo "Components: main restricted universe multiverse"
+echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg"
+echo ""
+echo "Types: deb-src"
+echo "URIs: https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports"
+echo "Suites: $suite-security"
+echo "Components: main restricted universe multiverse"
 echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg"
 } > $1/etc/apt/sources.list.d/ubuntu.sources
 rm -f $1/etc/apt/sources.list
