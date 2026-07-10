@@ -136,7 +136,7 @@ systemd-nspawn -D $1 \
   --setenv=DEBIAN_FRONTEND=noninteractive \
   --setenv=DEBCONF_NONINTERACTIVE_SEEN=true \
   /bin/bash -c "echo 'kdump-tools kdump-tools/use_kdump boolean false' | debconf-set-selections && \
-  sudo apt-get -y install linux-firmware aptdaemon initramfs-tools vim cloud-guest-utils e2fsprogs sudo openssh-server curl wget git htop net-tools build-essential ca-certificates"
+  sudo apt-get -y install linux-firmware aptdaemon initramfs-tools vim cloud-guest-utils e2fsprogs sudo openssh-server curl wget git htop net-tools build-essential ca-certificates mesa-utils lm-sensors nvme-cli pciutils usbutils rfkill"
 if [ "$build_type" = "desktop" ]; then
 systemd-nspawn -D $1 \
   --resolv-conf=replace-host \
