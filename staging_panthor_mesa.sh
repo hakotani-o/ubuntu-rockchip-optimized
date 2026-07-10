@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e # 发生错误时立即停止
 set -x
- echo "deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports resolute main restricted universe multiverse" | sudo tee /etc/apt/sources.list.d/ubuntu26-src.list
- echo "deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports resolute-updates main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list.d/ubuntu26-src.list
+ echo "deb-src http://ports.ubuntu.com/ubuntu-ports resolute main restricted universe multiverse" | sudo tee /etc/apt/sources.list.d/ubuntu26-src.list
+ echo "deb-src http://ports.ubuntu.com/ubuntu-ports resolute-updates main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list.d/ubuntu26-src.list
 
 # 1. 创建工作目录并进入
 rm -rf libdrm-build && mkdir -p libdrm-build && cd libdrm-build
