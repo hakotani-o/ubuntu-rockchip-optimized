@@ -143,7 +143,7 @@ systemd-nspawn -D $1 \
   --as-pid2 \
   --setenv=DEBIAN_FRONTEND=noninteractive \
   --setenv=DEBCONF_NONINTERACTIVE_SEEN=true \
-  /bin/bash -c "sudo apt-get -y install ubuntu-desktop-minimal gdm3 yaru-theme-unity yaru-theme-icon yaru-theme-gtk"
+  /bin/bash -c "sudo apt-get -y install ubuntu-desktop-minimal gdm3 oem-config-gtk ubiquity-frontend-gtk ubiquity-slideshow-ubuntu yaru-theme-unity yaru-theme-icon yaru-theme-gtk"
 systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 /bin/bash -c "sudo apt-get install -y gstreamer1.0-plugins-bad gstreamer1.0-plugins-good gstreamer1.0-tools clapper mpv vulkan-tools mesa-vulkan-drivers"
 else
 # Server build: Install minimal Mesa/DRM support
@@ -209,17 +209,6 @@ true > $1/etc/machine-id
 touch $1/var/log/syslog
 chown root:adm $1/var/log/syslog
 systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 ssh-keygen -A
-# 创建默认用户（无 oem-config，直接可用）
-systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 useradd -m -s /bin/bash -G sudo,video,render orangepi
-systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 bash -c 'echo "orangepi:orangepi" | chpasswd'
-systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 bash -c 'echo "root:root" | chpasswd'
-# 自动登录 GDM
-mkdir -p $1/etc/gdm3
-cat > $1/etc/gdm3/custom.conf << 'GDMEOF'
-[daemon]
-AutomaticLoginEnable=true
-AutomaticLogin=orangepi
-GDMEOF
 # debug
 echo "linux-version"
 systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 linux-version list
