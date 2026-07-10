@@ -8,9 +8,9 @@ if [ "$(id -u)" -ne 0 ]; then
     exit 1
 fi
 set -x
-kernel=`ls kernel/linux*.deb 2>/dev/null | wc -l`
-if [ $kernel -lt 3 ]; then
-	echo "Build kernel first (expected >=3, got $kernel)"
+kernel=`ls kernel/linux*.deb|wc -l`
+if [ $kernel -ne 5 ]; then
+	echo "Build kernel first"
 	exit 1
 fi
 
@@ -136,7 +136,7 @@ systemd-nspawn -D $1 \
   --setenv=DEBIAN_FRONTEND=noninteractive \
   --setenv=DEBCONF_NONINTERACTIVE_SEEN=true \
   /bin/bash -c "echo 'kdump-tools kdump-tools/use_kdump boolean false' | debconf-set-selections && \
-  sudo apt-get -y install linux-firmware aptdaemon initramfs-tools vim cloud-guest-utils e2fsprogs sudo openssh-server curl wget git htop net-tools build-essential ca-certificates mesa-utils lm-sensors nvme-cli"
+  sudo apt-get -y install linux-firmware aptdaemon initramfs-tools vim cloud-guest-utils e2fsprogs sudo openssh-server curl wget git htop net-tools build-essential ca-certificates"
 if [ "$build_type" = "desktop" ]; then
 systemd-nspawn -D $1 \
   --resolv-conf=replace-host \
@@ -181,7 +181,7 @@ systemd-nspawn -D $1 \
   /bin/bash -c "sudo apt-get -y install libpciaccess0 libxcb-shm0 libxcb-xfixes0 libvulkan1 libxshmfence1 libxxf86vm1 libx11-6"
 
 # Now install custom deb packages with all dependencies available
-systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo /bin/bash -c "cd kkk && sudo dpkg -i *.deb && sudo dpkg -i kernel/*.deb"
+systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo /bin/bash -c "cd kkk && sudo dpkg -i *.deb && sudo dpkg -i kernel/*ondemand*.deb && sudo dpkg -i kernel/*conservative*.deb"
 
 
 
@@ -193,7 +193,7 @@ systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo apt-get -y instal
 
 # Default kernel command line arguments
 echo -n "rootwait rw console=ttyS2,1500000 console=tty1 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory" > $1/etc/kernel/cmdline
-echo -n " video=HDMI-A-1:1920x1080@60" >> $1/etc/kernel/cmdline
+echo -n " quiet splash plymouth.ignore-serial-consoles" >> $1/etc/kernel/cmdline
 
 # Override u-boot-menu config
 mkdir -p $1/usr/share/u-boot-menu/conf.d
