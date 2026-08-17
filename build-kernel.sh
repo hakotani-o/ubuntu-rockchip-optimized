@@ -31,7 +31,7 @@ make defconfig
 
 make olddefconfig
 cp .config /2-config.txt
-
+export KCFLAGS="-march=armv8-a+crypto+crc -mtune=cortex-a76.cortex-a55"
 fakeroot make -j$(nproc) LOCALVERSION="-${kernel_name,,}"  deb-pkg
 cd ..
 cp *.deb /
