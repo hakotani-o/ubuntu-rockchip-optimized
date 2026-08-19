@@ -73,7 +73,7 @@ sudo apt-get install -y build-essential devscripts debhelper ninja-build \
 # sudo ln -sf /usr/local/bin/meson /usr/bin/meson
 
 # 最新 libdrm ソース（例: GitHubからcloneしたもの）
-git clone --depth 1 https://gitlab.freedesktop.org/mesa/mesa.git -b staging/26.0 source
+git clone --depth 1 https://gitlab.freedesktop.org/mesa/mesa.git -b staging/26.1 source
 cd source
 
 
