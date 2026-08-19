@@ -85,6 +85,7 @@ if [ $4 == "kernel" ]; then
 # kernel
 cp build-kernel.sh arm64
 cp overlay/my-add.txt arm64
+cp overlay/3563-remake.patch arm64
 chmod +x arm64/build-kernel.sh
 
 # CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND
