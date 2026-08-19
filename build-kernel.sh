@@ -44,6 +44,7 @@ wget https://raw.githubusercontent.com/warpme/minimyth2/refs/heads/master/script
 # 3567-media-verisilicon-AV1-Restore-IOMMU-context-before-d.patch
 wget https://raw.githubusercontent.com/warpme/minimyth2/refs/heads/master/script/kernel/linux-7.1/files/3567-media-verisilicon-AV1-Restore-IOMMU-context-before-d.patch
 cp /3563-remake.patch .
+cd ..
 
 git clone --depth 1 https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git -b linux-7.2.y
 
