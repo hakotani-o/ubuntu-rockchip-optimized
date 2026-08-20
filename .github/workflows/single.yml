@@ -33,7 +33,7 @@ jobs:
           mkdir -p build/overlay build/kernel build/images
           cp *.sh build
           cp -r patch build
-          cp my-add.txt 3563-remake.patch libdrm-amdgpu1.symbols.patch build/overlay
+          cp my-add.txt 3563-remake.patch build/overlay
           cd build
           chmod +x *.sh
           ./main-control.sh $mesa_source
