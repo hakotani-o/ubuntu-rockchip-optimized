@@ -80,6 +80,7 @@ jobs:
           files: |
             ./build/images/Ubuntu-*img.xz 
             ./build/overlay/*.bin
+            ./build/kernel/*.deb
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
