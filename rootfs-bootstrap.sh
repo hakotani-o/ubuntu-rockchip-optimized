@@ -9,7 +9,7 @@ if [ "$(id -u)" -ne 0 ]; then
 fi
 set -x
 kernel=`ls kernel/linux*.deb|wc -l`
-if [ $kernel -ne 5 ]; then
+if [ $kernel -ne 3 ]; then
 	echo "Build kernel first"
 	exit 1
 fi
@@ -139,9 +139,8 @@ rm -f overlay/mesa-opencl-icd_*.deb overlay/mesa-teflon-delegate_*.deb overlay/m
 rm -f overlay/libdrm-tests_*.deb && cp overlay/*.deb $1/kkk && cp -r kernel $1/kkk
 
 systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo /bin/bash -c "sudo apt-get -y purge \$(dpkg --list | grep -Ei 'linux-image|linux-headers|linux-modules|linux-rockchip' | awk '{ print \$2 }')"
-systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo /bin/bash -c "cd kkk && sudo dpkg -i *.deb && sudo dpkg -i kernel/*ondemand*.deb"
-
-
+systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo /bin/bash -c "cd kkk && sudo dpkg -i *.deb && sudo dpkg -i kernel/*.deb"
+#&& sudo dpkg -i kernel/*conservative*.deb && sudo dpkg -i kernel/*ondemand*.deb"
 
 rm -rf $1/kkk
 kernel_version="`ls -1 $1/boot/vmlinu?-*|sed 's#-# #g' | awk '{ print $2 }'|head -1`"

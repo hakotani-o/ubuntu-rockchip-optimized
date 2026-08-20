@@ -8,7 +8,7 @@ set -x
 rm -rf libdrm-build && mkdir -p libdrm-build && cd libdrm-build
 
 # 最新 libdrm ソース（例: GitHubからcloneしたもの）
-git clone --depth 1 https://gitlab.freedesktop.org/mesa/libdrm.git source
+git clone --depth 1 https://gitlab.freedesktop.org/mesa/libdrm.git -b libdrm-2.4.131 source
 cd source
 
 # 2. 依存関係のインストールと、公式ソースコードのダウンロード
@@ -20,7 +20,7 @@ cp -r libdrm-*/debian ./
 rm -rf libdrm-*/
 
 cd debian
-patch -p1 < /libdrm-amdgpu1.symbols.patch
+#patch -p1 < /libdrm-amdgpu1.symbols.patch
 cd ..
 # 3. 【重要】ダウンロードされたソースコードの「フォルダの中」に移動します
 # (apt-get source を実行すると、libdrm-2.x.x のようなフォルダが自動で作られます)
@@ -73,7 +73,7 @@ sudo apt-get install -y build-essential devscripts debhelper ninja-build \
 # sudo ln -sf /usr/local/bin/meson /usr/bin/meson
 
 # 最新 libdrm ソース（例: GitHubからcloneしたもの）
-git clone --depth 1 https://gitlab.freedesktop.org/mesa/mesa.git -b staging/26.1 source
+git clone --depth 1 https://gitlab.freedesktop.org/mesa/mesa.git -b staging/26.0 source
 cd source
 
 

@@ -57,15 +57,12 @@ systemd-nspawn -D arm64 --resolv-conf=replace-host --as-pid2 sudo apt-get -y upg
 systemd-nspawn -D arm64 --resolv-conf=replace-host --as-pid2 sudo apt-get -y dist-upgrade
 systemd-nspawn -D arm64 --resolv-conf=replace-host --as-pid2 sudo apt-get -y install build-essential gcc-aarch64-linux-gnu bison \
 debootstrap libssl-dev kmod cpio xz-utils fakeroot flex rsync \
-device-tree-compiler zstd python3 \
+device-tree-compiler zstd python3 wget \
 python-is-python3 fdisk bc debhelper python3-pyelftools python3-setuptools \
 python3-pkg-resources swig libfdt-dev libpython3-dev \
-git fakeroot build-essential ncurses-dev wget \
-libelf-dev libgnutls28-dev gcc-15 g++-15 libdw-dev
-
-systemd-nspawn -D arm64 --resolv-conf=replace-host --as-pid2 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-15 15
-systemd-nspawn -D arm64 --resolv-conf=replace-host --as-pid2 sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-15 15
-
+git fakeroot build-essential ncurses-dev \
+libelf-dev libgnutls28-dev libdw-dev
+cp -r patch arm64
 echo "\n##################      systemd-nspawn  END     #######################\n"
 
 # u-boot
@@ -85,16 +82,14 @@ if [ $4 == "kernel" ]; then
 # kernel
 cp build-kernel.sh arm64
 cp overlay/my-add.txt arm64
-cp overlay/3563-remake.patch arm64
 chmod +x arm64/build-kernel.sh
 
-# CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND
 systemd-nspawn -D arm64 \
   --resolv-conf=replace-host \
   --as-pid2 \
   --setenv=DEBIAN_FRONTEND=noninteractive \
   --setenv=DEBCONF_NONINTERACTIVE_SEEN=true \
-/bin/bash -c "./build-kernel.sh kernel CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
+/bin/bash -c "./build-kernel.sh kernel"
 
 mkdir -p kernel
 cp arm64/*.deb kernel
