@@ -32,7 +32,7 @@ git clone --depth 1 https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux
 
 cd linux
 # minimyth2 patch
-for i in ../patch/*.patch
+for i in ../minimyth2/*.patch
 do
         echo $i
         patch -p1 < $i
