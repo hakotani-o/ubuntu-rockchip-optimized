@@ -1,30 +1,31 @@
 #!/bin/bash
 set -e # エラーが発生したらその時点で停止
 set -x
- echo "deb-src http://ports.ubuntu.com/ubuntu-ports resolute main restricted universe multiverse" | sudo tee /etc/apt/sources.list.d/ubuntu26-src.list
- echo "deb-src http://ports.ubuntu.com/ubuntu-ports resolute-updates main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list.d/ubuntu26-src.list
+sudo apt update
+sudo apt install -y build-essential devscripts dpkg-dev fakeroot wget equivs
+sudo apt install -y docutils-common libudev-dev python3-docutils python3-roman-numerals libpaper-utils python3-pil docutils-common libudev-dev python3-docutils python3-roman-numerals sgml-base xml-core 
+
+export DEBEMAIL="user@localhost"
+export DEBFULLNAME="Panthor Builder"
+export DEB_CFLAGS_APPEND="-march=armv8-a+crypto+crc -mtune=cortex-a76.cortex-a55" 
+export DEB_CXXFLAGS_APPEND="-march=armv8-a+crypto+crc -mtune=cortex-a76.cortex-a55" 
 
 # 1. 作業用のディレクトリを作成して移動
 rm -rf libdrm-build && mkdir -p libdrm-build && cd libdrm-build
 
-# 最新 libdrm ソース（例: GitHubからcloneしたもの）
-git clone --depth 1 https://gitlab.freedesktop.org/mesa/libdrm.git -b libdrm-2.4.131 source
-cd source
+# 最新 libdrm ソース
+wget http://httpredir.debian.org/debian/pool/main/libd/libdrm/libdrm_2.4.134-3.dsc
+wget http://httpredir.debian.org/debian/pool/main/libd/libdrm/libdrm_2.4.134.orig.tar.xz
+wget http://httpredir.debian.org/debian/pool/main/libd/libdrm/libdrm_2.4.134.orig.tar.xz.asc
 
-# 2. 依存関係のインストールと、公式ソースコードのダウンロード
-sudo apt update
-sudo apt build-dep libdrm -y
-apt-get source libdrm
-# 最新libdrm ソースの場合
-cp -r libdrm-*/debian ./
-rm -rf libdrm-*/
+wget http://httpredir.debian.org/debian/pool/main/libd/libdrm/libdrm_2.4.134-3.debian.tar.xz
 
-cd debian
-#patch -p1 < /libdrm-amdgpu1.symbols.patch
-cd ..
-# 3. 【重要】ダウンロードされたソースコードの「フォルダの中」に移動します
-# (apt-get source を実行すると、libdrm-2.x.x のようなフォルダが自動で作られます)
-#cd libdrm-*/
+# 2. ソースコードの展開
+dpkg-source -x libdrm_2.4.134-3.dsc
+
+# 3. ビルド依存関係（Build-Depends）の解決
+cd libdrm-2.4.134
+mk-build-deps -i -r
 
 # 4. パッケージをビルドする（署名はスキップ）
 DEB_BUILD_OPTIONS="noautodbgsym" dpkg-buildpackage -us -uc -b
@@ -64,24 +65,51 @@ sudo apt-get install -y build-essential devscripts debhelper ninja-build \
   libglvnd-core-dev libvulkan-dev glslang-tools python3-pycparser
   #libarchive-dev
 
+sudo apt-get -y install bindgen cbindgen directx-headers-dev flatbuffers-compiler \
+  flatbuffers-compiler-dev libclang-dev libclc-21 libdisplay-info-dev \
+  libflatbuffers-dev libflatbuffers23.5.26 libgbm1 libgl1 libgl1-mesa-dri \
+  libglvnd0 libglx-mesa0 libglx0 libpng-dev librust-allocator-api2-dev \
+  librust-arbitrary-dev librust-bumpalo-dev librust-cfg-if-dev \
+  librust-critical-section-dev librust-crossbeam-deque-dev \
+  librust-crossbeam-epoch+std-dev librust-crossbeam-epoch-dev \
+  librust-crossbeam-utils-dev librust-derive-arbitrary-dev librust-either-dev \
+  librust-equivalent-dev librust-erased-serde-dev librust-foldhash-dev \
+  librust-getrandom-dev librust-hashbrown-dev librust-indexmap-dev \
+  librust-itoa-dev librust-js-sys-dev librust-libc-dev librust-log-dev \
+  librust-malloc-size-of-dev librust-memchr-dev librust-no-panic-dev \
+  librust-once-cell-dev librust-parking-lot-core-dev librust-paste-dev \
+  librust-portable-atomic-dev librust-ppv-lite86-dev librust-proc-macro2-dev \
+  librust-quote-dev librust-rand-chacha-dev librust-rand-core+getrandom-dev \
+  librust-rand-core+serde-dev librust-rand-core+std-dev librust-rand-core-dev \
+  librust-rand-dev librust-rayon-core-dev librust-rayon-dev \
+ librust-rustc-hash-2-dev librust-rustversion-dev librust-ryu-dev \
+  librust-serde-core-dev librust-serde-derive-dev librust-serde-dev \
+  librust-serde-fmt-dev librust-serde-json-dev librust-serde-test-dev \
+  librust-smallvec-dev librust-sval-buffer-dev librust-sval-derive-dev \
+  librust-sval-dev librust-sval-dynamic-dev librust-sval-fmt-dev \
+  librust-sval-ref-dev librust-sval-serde-dev librust-syn-dev \
+  librust-unicode-ident-dev librust-value-bag-dev librust-value-bag-serde1-dev \
+  librust-value-bag-sval2-dev librust-void-dev librust-wasm-bindgen-dev \
+  librust-wasm-bindgen-macro-dev librust-wasm-bindgen-macro-support-dev \
+  librust-wasm-bindgen-shared-dev librust-zerocopy-derive-dev \
+  librust-zerocopy-dev libset-scalar-perl libstd-rust-1.93 \
+libstd-rust-1.93-dev libva-dev libva-drm2 libva-glx2 libva-wayland2 \
+  libva-x11-2 libva2 libxtensor-dev llvm-spirv-21 mesa-libgallium \
+  nlohmann-json3-dev rustc rustc-1.93 rustfmt rustfmt-1.93 xtl-dev 
 
-# 2. apt版の古いmesonが入っていれば削除し、pipで最新版のmesonをシステムに導入します
-# sudo apt-get remove -y meson
-# sudo python3 -m pip install --break-system-packages --upgrade meson
+# 1. mesa ダウンロード
+wget http://httpredir.debian.org/debian/pool/main/m/mesa/mesa_26.1.6-1.dsc
+wget http://httpredir.debian.org/debian/pool/main/m/mesa/mesa_26.1.6.orig.tar.xz
+wget http://httpredir.debian.org/debian/pool/main/m/mesa/mesa_26.1.6.orig.tar.xz.asc
+wget http://httpredir.debian.org/debian/pool/main/m/mesa/mesa_26.1.6-1.debian.tar.xz
 
-# 【★ここを追加★】debuildが認識できる場所にシンボリックリンクを作成します
-# sudo ln -sf /usr/local/bin/meson /usr/bin/meson
+# 2. ソースコードの展開
+dpkg-source -x mesa_26.1.6-1.dsc
 
-# 最新 libdrm ソース（例: GitHubからcloneしたもの）
-git clone --depth 1 https://gitlab.freedesktop.org/mesa/mesa.git -b staging/26.0 source
-cd source
+# 3. ビルド依存関係（Build-Depends）の解決
+cd mesa-26.1.6
+mk-build-deps -i -r
 
-
-# ソースのダウンロード
-apt source mesa
-MESA_SRC_DIR=$(ls -d mesa-*)
-cp -r $MESA_SRC_DIR/debian ./
-rm -rf  "$MESA_SRC_DIR"
 mesa_version="$(cat VERSION)"
 echo "mesa_version=$mesa_version"
 
@@ -94,51 +122,6 @@ dch -b --newversion "${mesa_version}-1ubuntu1~panthor1" \
     --distribution resolute \
     --force-distribution \
     "Build for Panthor GPU support with optimization"
-
-
-### echo "=== 3. debian/rules の書き換え (Panthor最適化) ==="
-# gallium-drivers の行を置換 (panfrost,kmsro,zink,softpipe のみに制限)
-### sed -i 's/-Dgallium-drivers=.*/-Dgallium-drivers=panfrost,kmsro,zink,softpipe/' debian/rules
-# (既存のドライバー書き換え処理のあとに以下を追加してください)
-# 存在しないファイルでエラーになるのを防ぐため、rm に -f フラグを追加する
-###  sed -i 's/rm debian\/tmp\/usr\/lib\/\*\/libEGL_mesa.so/rm -f debian\/tmp\/usr\/lib\/\*\/libEGL_mesa.so/g' debian/rules
-###  sed -i 's/rm debian\/tmp\/usr\/lib\/\*\/libGLX_mesa.so/rm -f debian\/tmp\/usr\/lib\/\*\/libGLX_mesa.so/g' debian/rules
-# vdpauファイルが存在しない場合に mv コマンドでエラーになるのを防ぐパッチ
-#sed -i 's/mv debian\/tmp\/usr\/lib\/\*\/vdpau/if [ -d debian\/tmp\/usr\/lib\/\*\/vdpau ]; then mv debian\/tmp\/usr\/lib\/\*\/vdpau/g' debian/rules
-#sed -i 's/libvdpau\*.so\*/libvdpau\*.so\*; fi/g' debian/rules
-### echo "=== 3. debian/rules の書き換え (Panthor最適化) ==="
-# (前略：rm -f の2行は残したままでOKです)
-# 【★前回のvdpauの2行を消して、この1行に差し替えます★】
-# vdpauを移動させようとする処理（連続する3行）を、先頭に「#」をつけて丸ごと無効化します
-### sed -i '/install -m755 -d debian\/mesa-vdpau-drivers/,/debian\/mesa-vdpau-drivers\/usr\/lib/ s/^/#/' debian/rules
-# 【★今回新しく追加する1行★】
-# _drv_video.soを移動させようとする処理（連続する2行）を、先頭に「#」をつけて無効化します
-### sed -i '/install -m755 -d debian\/mesa-va-drivers/,/debian\/mesa-va-drivers\/usr\/lib/ s/^/#/' debian/rules
-# HAKO 01
-### sed -i '/mv debian\/tmp\/usr\/lib\/\${DEB_HOST_MULTIARCH}\/dri\/\*_drv_video.so/,/debian\/mesa-libgallium\/usr\/lib\/\${DEB_HOST_MULTIARCH}\/dri/ s/^/#/' debian/rules
-### truncate -s 0 debian/mesa-drm-shim.install
-### truncate -s 0 debian/mesa-opencl-icd.install
-# 【★今回新しく追加する2行★】
-# Vulkanパッケージの指示書から、生成されなかったレイヤーファイルの記述を削除します
-### sed -i '/libVkLayer_/d' debian/mesa-vulkan-drivers.install
-### sed -i '/implicit_layer.d/d' debian/mesa-vulkan-drivers.install
-# 【★今回新しく追加する1行★】
-# Vulkanパッケージの指示書から、explicit_layer の記述も削除します
-### sed -i '/explicit_layer.d/d' debian/mesa-vulkan-drivers.install
-# 【★今回新しく追加する1行★】
-# Vulkanパッケージの指示書から、AMD用の設定ファイルの記述を削除します
-### sed -i '/00-radv-defaults.conf/d' debian/mesa-vulkan-drivers.install
-# 指示書から不要なファイルを確実に削除する4行（ここが揃っていればOKです）
-### sed -i '/libVkLayer_/d' debian/mesa-vulkan-drivers.install
-### sed -i '/implicit_layer.d/d' debian/mesa-vulkan-drivers.install
-### sed -i '/explicit_layer.d/d' debian/mesa-vulkan-drivers.install
-### sed -i '/00-radv-defaults.conf/d' debian/mesa-vulkan-drivers.install
-# 1. teflon パッケージの指示書を空っぽにします
-### truncate -s 0 debian/mesa-teflon-delegate.install
-# 2. Vulkanパッケージの指示書から、overlay-control の記述を削除します
-### sed -i '/mesa-overlay-control.py/d' debian/mesa-vulkan-drivers.install
-# HAKO 02
-### sed -i '/mesa-screenshot-control.py/d' debian/mesa-vulkan-drivers.install
 
 # vulkan-drivers の行を置換 (panfrost,swrast のみに制限)
 echo "=== 3. debian/rules の書き換え (Panthor最適化) ==="
@@ -158,11 +141,10 @@ echo "=== 3. debian/rules の書き換え (Panthor最適化) ==="
 # Mesa 26特有の _drv_video.so 移動処理（連続する3行）を丸ごとコメントアウトします
 sed -i '/Copy the hardlinked va drivers correctly/,/debian\/mesa-libgallium\/usr\/lib/ s/^/#/' debian/rules
 sed -i '/mv debian\/tmp\/usr\/lib\/\${DEB_HOST_MULTIARCH}\/dri\/\*_drv_video.so/,/debian\/mesa-libgallium\/usr\/lib\/\${DEB_HOST_MULTIARCH}\/dri/ s/^/#/' debian/rules
-
+# HAKO03
+sed -i 's/# use -f here though/rm debian\/tmp\/usr\/lib\/aarch64-linux-gnu\/dri\/nouveau_drv_video.so \n	rm debian\/tmp\/usr\/lib\/aarch64-linux-gnu\/dri\/virtio_gpu_drv_video.so \n	# use -f here though\n/' debian/rules
 
 echo "=== 3. debian/rules と指示書の書き換え (Panthor最適化) ==="
-# (前略：hakotaniさんが作ってくれた、先ほどの *_drv_video.so の mv コメントアウト行はそのまま残してください！)
-
 # 【★これを追加★】エラーの原因になる他社用パッケージの指示書を、絶対に存在する「空のディレクトリ」の指定に書き換えます
 # これにより、中身は空っぽでも「有効な.debファイル」が100%安全に生成されるようになります
 echo "README.rst usr/share/doc/mesa-common-dev/" > debian/mesa-drm-shim.install
@@ -183,15 +165,14 @@ EOF
 echo "=== 4. パッケージバージョンの変更 (自動上書き防止) ==="
 # バージョン末尾に「~panthor1」を自動付与
 CURRENT_VERSION=$(dpkg-parsechangelog -S Version)
-export DEBEMAIL="user@localhost"
-export DEBFULLNAME="Panthor Builder"
 # debchange --force-bad-version --newversion "${CURRENT_VERSION}~panthor1" "Custom Panthor-only build without heavy dependencies"
 # 修正後の推奨コード (例: 26.0.3-1ubuntu1+panthor1)
 debchange --force-bad-version --newversion "${CURRENT_VERSION}+panthor1" "Custom Panthor-only build without heavy dependencies"
 
 echo "=== 5. 依存チェックを無視してビルド実行 ==="
 # -d フラグで不要なビルド依存（Intel/AMD用ライブラリなど）のチェックをスキップ
-DEB_BUILD_OPTIONS="terse noautodbgsym" debuild -us -uc -b -d
+#DEB_BUILD_OPTIONS="terse noautodbgsym" debuild -us -uc -b -d
+DEB_BUILD_OPTIONS="noautodbgsym" debuild -us -uc -b -d
 
 echo "=== 6. ビルド完了 ==="
 DETECTED_VERSION=$(dpkg-parsechangelog -S Version)
@@ -208,10 +189,3 @@ echo "---------------------- MESA ----------------------------"
 echo "インストールする場合は、以下のコマンドを実行してください："
 echo "cd $(pwd) && sudo dpkg -i *.deb"
 echo "--------------------------------------------------"
-
-	
-
-# ubuntu-imageのフックやchroot内で実行する処理のイメージ
-#dpkg -i /tmp/patches/mesa-panthor/*.deb
-#apt-get install -f -y  # 実行に必要な最小限の依存（libdrm等）だけを自動解決
-
