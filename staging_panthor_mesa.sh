@@ -98,16 +98,16 @@ libstd-rust-1.93-dev libva-dev libva-drm2 libva-glx2 libva-wayland2 \
   nlohmann-json3-dev rustc rustc-1.93 rustfmt rustfmt-1.93 xtl-dev 
 
 # 1. mesa ダウンロード
-wget http://httpredir.debian.org/debian/pool/main/m/mesa/mesa_26.1.6-1.dsc
-wget http://httpredir.debian.org/debian/pool/main/m/mesa/mesa_26.1.6.orig.tar.xz
-wget http://httpredir.debian.org/debian/pool/main/m/mesa/mesa_26.1.6.orig.tar.xz.asc
-wget http://httpredir.debian.org/debian/pool/main/m/mesa/mesa_26.1.6-1.debian.tar.xz
+wget http://httpredir.debian.org/debian/pool/main/m/mesa/mesa_26.2.6-1.dsc
+wget http://httpredir.debian.org/debian/pool/main/m/mesa/mesa_26.2.6.orig.tar.xz
+wget http://httpredir.debian.org/debian/pool/main/m/mesa/mesa_26.2.6.orig.tar.xz.asc
+wget http://httpredir.debian.org/debian/pool/main/m/mesa/mesa_26.2.6-1.debian.tar.xz
 
 # 2. ソースコードの展開
-dpkg-source -x mesa_26.1.6-1.dsc
+dpkg-source -x mesa_26.2.6-1.dsc
 
 # 3. ビルド依存関係（Build-Depends）の解決
-cd mesa-26.1.6
+cd mesa-26.2.6
 mk-build-deps -i -r
 
 mesa_version="$(cat VERSION)"
