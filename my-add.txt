@@ -137,7 +137,15 @@ CONFIG_TMPFS_XATTR=y
 CONFIG_XFS_FS=n
 CONFIG_F2FS_FS=n
 CONFIG_MINIX_FS=n
-
+# Ubuntu
+# SquashFS（snap等で使用）
+CONFIG_SQUASHFS_XATTR=y
+CONFIG_SQUASHFS_LZ4=y
+CONFIG_SQUASHFS_LZO=y
+CONFIG_SQUASHFS_XZ=y
+CONFIG_SQUASHFS_ZSTD=y
+CONFIG_SQUASHFS_4K_DEVBLK_SIZE=y
+CONFIG_SQUASHFS_EMBEDDED=y
 # ====================================================================
 # 🛠️ 開発・デバッグ用（config自動抽出用）
 # ====================================================================
