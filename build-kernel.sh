@@ -40,6 +40,31 @@ done
 cp /my-add.txt .
 wget https://raw.githubusercontent.com/archlinuxarm/PKGBUILDs/refs/heads/master/core/linux-aarch64/config
 
+sed -i '/_AC97_/d' config
+sed -i '/CONFIG_WLAN_VENDOR_SILABS/d' config
+sed -i '/^CONFIG_INFINIBAND/d' config
+sed -i '/^CONFIG_SND_SOC_FSL_/d' config
+sed -i '/^CONFIG_SND_HDA/d' config
+sed -i '/^CONFIG_SND_SOC_IMX_AUDMUX/d' config
+sed -i '/^CONFIG_DRM_LONTIUM_LT8912B/d' config
+sed -i '/^CONFIG_DRM_LONTIUM_LT9611/d' config
+sed -i '/^CONFIG_DRM_LONTIUM_LT9611UXC/d' config
+sed -i '/^CONFIG_DRM_TOSHIBA_TC358767/d' config
+sed -i '/^CONFIG_DRM_TI_TFP410/d' config
+# dont delete CONFIG_DRM_TI_SN65DSI86
+#sed -i '/^CONFIG_DRM_TI_SN65DSI86/d' config
+sed -i '/^CONFIG_DRM_I2C_ADV7511/d' config
+sed -i '/^CONFIG_DRM_BOCHS/d' config
+sed -i '/^CONFIG_DRM_CIRRUS_QEMU/d' config
+sed -i '/^CONFIG_DRM_LIMA/d' config
+
+sed -i '/^CONFIG_BROADCOM_PHY/d' config
+sed -i '/^CONFIG_BCM54140_PHY/d' config
+sed -i '/^CONFIG_BCM7XXX_PHY/d' config
+sed -i '/^CONFIG_BCM87XX_PHY/d' config
+sed -i '/^CONFIG_MICROCHIP_PHY/d' config
+
+
 #make defconfig
 ./scripts/kconfig/merge_config.sh -m config ./my-add.txt
 
@@ -52,7 +77,7 @@ make olddefconfig
 sed -i 's/CONFIG_LOCALVERSION="-ARCH"/CONFIG_LOCALVERSION=""/' .config
 cp .config /2-config.txt
 
-export KCFLAGS="-march=armv8-a+crypto+crc -mtune=cortex-a76.cortex-a55"
+export KCFLAGS="-mcpu=cortex-a76.cortex-a55+crypto+dotprod+nosve -fno-plt"
 fakeroot make -j$(nproc) LOCALVERSION="-rockchip"  deb-pkg
 cd ..
 cp *.deb /
