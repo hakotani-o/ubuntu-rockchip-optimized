@@ -66,10 +66,10 @@ systemd-nspawn -D $1 --resolv-conf=replace-host -E DEBIAN_FRONTEND=noninteractiv
 flex libssl-dev bc rsync kmod cpio xz-utils fakeroot python3 bison \
 python-is-python3 debhelper python3-pyelftools python3-setuptools \
 python3-pkg-resources swig libfdt-dev libpython3-dev \
-git fakeroot libssl-dev libelf-dev libgnutls28-dev gcc-13 g++-13
+git fakeroot libssl-dev libelf-dev libgnutls28-dev 
 
-systemd-nspawn -D $1 --resolv-conf=replace-host -E DEBIAN_FRONTEND=noninteractive --as-pid2 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 13
-systemd-nspawn -D $1 --resolv-conf=replace-host -E DEBIAN_FRONTEND=noninteractive --as-pid2 sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 13
+#systemd-nspawn -D $1 --resolv-conf=replace-host -E DEBIAN_FRONTEND=noninteractive --as-pid2 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 13
+#systemd-nspawn -D $1 --resolv-conf=replace-host -E DEBIAN_FRONTEND=noninteractive --as-pid2 sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 13
 
 systemd-nspawn -D $1 --resolv-conf=replace-host -E DEBIAN_FRONTEND=noninteractive --as-pid2 sudo apt-get -y install meson ninja-build pkgconf pkgconf-bin python3-mako \
   libdrm-dev libpciaccess-dev libffi-dev libsensors-dev libxml2-dev \
@@ -93,9 +93,9 @@ echo "\n##################	systemd-nspawn	END	#######################\n"
 
 echo "=== 1. Mesaソースコードの取得 ==="
 if [ "$2" == "upstream" ]; then
-    echo "freedesktop staging/26.0 から取得します..."
+    echo "lanchpad から取得します..."
 	# mesa staging 26.0 version
-	cp staging_panthor_mesa.sh overlay/libdrm-amdgpu1.symbols.patch $1 && chmod +x $1/staging_panthor_mesa.sh
+	cp staging_panthor_mesa.sh $1 && chmod +x $1/staging_panthor_mesa.sh
 	systemd-nspawn -D $1 --resolv-conf=replace-host -E DEBIAN_FRONTEND=noninteractive --as-pid2 /staging_panthor_mesa.sh
 else
 	# ubuntu version
