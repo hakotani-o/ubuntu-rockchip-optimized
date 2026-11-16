@@ -14,11 +14,10 @@ export DEB_CXXFLAGS_APPEND="-march=armv8-a+crypto+crc -mtune=cortex-a76.cortex-a
 rm -rf libdrm-build && mkdir -p libdrm-build && cd libdrm-build
 
 # 最新 libdrm ソース
-wget http://httpredir.debian.org/debian/pool/main/libd/libdrm/libdrm_2.4.134-3.dsc
-wget http://httpredir.debian.org/debian/pool/main/libd/libdrm/libdrm_2.4.134.orig.tar.xz
-wget http://httpredir.debian.org/debian/pool/main/libd/libdrm/libdrm_2.4.134.orig.tar.xz.asc
-
-wget http://httpredir.debian.org/debian/pool/main/libd/libdrm/libdrm_2.4.134-3.debian.tar.xz
+wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/libdrm/2.4.134-3~ubuntu0.26.04.1/libdrm_2.4.134.orig.tar.xz
+wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/libdrm/2.4.134-3~ubuntu0.26.04.1/libdrm_2.4.134.orig.tar.xz.asc
+wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/libdrm/2.4.134-3~ubuntu0.26.04.1/libdrm_2.4.134-3~ubuntu0.26.04.1.debian.tar.xz
+wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/libdrm/2.4.134-3~ubuntu0.26.04.1/libdrm_2.4.134-3~ubuntu0.26.04.1.dsc
 
 # 2. ソースコードの展開
 dpkg-source -x libdrm_2.4.134-3.dsc
@@ -55,8 +54,8 @@ sudo apt-get install -y build-essential devscripts debhelper ninja-build \
     libxcb-shm0-dev libxcb-dri2-0-dev libxcb-dri3-dev libxshmfence-dev \
     libxrandr-dev libxxf86vm-dev libexpat1-dev libzstd-dev zlib1g-dev \
     python3-ply python3-yaml python3-pip python3-setuptools glslang-tools \
-    spirv-tools libclc-21-dev llvm-21-dev libclang-cpp21-dev spirv-tools-dev \
-    libllvmspirvlib-21-dev libclang-21-dev libwayland-egl-backend-dev \
+    spirv-tools libclc-22-dev llvm-22-dev libclang-cpp22-dev spirv-tools-dev \
+    libllvmspirvlib-22-dev libclang-22-dev libwayland-egl-backend-dev \
     libxcb-randr0-dev  libdrm-dev libpciaccess-dev libffi-dev libsensors-dev libxml2-dev \
   libx11-dev libx11-xcb-dev libxcb-dri2-0-dev libxcb-dri3-dev libxcb-glx0-dev \
   libxcb-present-dev libxcb-randr0-dev libxcb-shm0-dev libxcb-xfixes0-dev libxcb1-dev \
@@ -95,20 +94,22 @@ sudo apt-get -y install bindgen cbindgen directx-headers-dev flatbuffers-compile
   librust-zerocopy-dev libset-scalar-perl libstd-rust-1.93 \
 libstd-rust-1.93-dev libva-dev libva-drm2 libva-glx2 libva-wayland2 \
   libva-x11-2 libva2 libxtensor-dev llvm-spirv-21 mesa-libgallium \
-  nlohmann-json3-dev rustc rustc-1.93 rustfmt rustfmt-1.93 xtl-dev 
+  nlohmann-json3-dev rustc rustc-1.93 rustfmt rustfmt-1.93 xtl-dev \
+  x11proto-dev valgrind meson llvm-spirv-22 libxcb-sync-dev
 
 # 1. mesa ダウンロード
-wget http://httpredir.debian.org/debian/pool/main/m/mesa/mesa_26.2.6-1.dsc
-wget http://httpredir.debian.org/debian/pool/main/m/mesa/mesa_26.2.6.orig.tar.xz
-wget http://httpredir.debian.org/debian/pool/main/m/mesa/mesa_26.2.6.orig.tar.xz.asc
-wget http://httpredir.debian.org/debian/pool/main/m/mesa/mesa_26.2.6-1.debian.tar.xz
+wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/mesa/26.2.4-1ubuntu1~26.04.1/mesa_26.2.4.orig.tar.xz
+wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/mesa/26.2.4-1ubuntu1~26.04.1/mesa_26.2.4.orig.tar.xz.asc
+wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/mesa/26.2.4-1ubuntu1~26.04.1/mesa_26.2.4-1ubuntu1~26.04.1.debian.tar.xz
+wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/mesa/26.2.4-1ubuntu1~26.04.1/mesa_26.2.4-1ubuntu1~26.04.1.dsc
 
 # 2. ソースコードの展開
-dpkg-source -x mesa_26.2.6-1.dsc
+dpkg-source -x mesa_26.2.4-1.dsc
 
 # 3. ビルド依存関係（Build-Depends）の解決
-cd mesa-26.2.6
-mk-build-deps -i -r
+cd mesa-26.2.4
+mk-build-deps
+sudo apt-get install -y ./mesa-build-deps_26.2.4-1ubuntu1~26.04.1_arm64.deb
 
 mesa_version="$(cat VERSION)"
 echo "mesa_version=$mesa_version"
@@ -139,10 +140,13 @@ sed -i 's/-Dllvm=enabled/-Dllvm=disabled/g' debian/rules
 echo "=== 3. debian/rules の書き換え (Panthor最適化) ==="
 # 2. 【★今回新しく追加する1行★】
 # Mesa 26特有の _drv_video.so 移動処理（連続する3行）を丸ごとコメントアウトします
-sed -i '/Copy the hardlinked va drivers correctly/,/debian\/mesa-libgallium\/usr\/lib/ s/^/#/' debian/rules
-sed -i '/mv debian\/tmp\/usr\/lib\/\${DEB_HOST_MULTIARCH}\/dri\/\*_drv_video.so/,/debian\/mesa-libgallium\/usr\/lib\/\${DEB_HOST_MULTIARCH}\/dri/ s/^/#/' debian/rules
+#sed -i '/Copy the hardlinked va drivers correctly/,/debian\/mesa-libgallium\/usr\/lib/ s/^/#/' debian/rules
+#sed -i '/mv debian\/tmp\/usr\/lib\/\${DEB_HOST_MULTIARCH}\/dri\/\*_drv_video.so/,/debian\/mesa-libgallium\/usr\/lib\/\${DEB_HOST_MULTIARCH}\/dri/ s/^/#/' debian/rules
 # HAKO03
-sed -i 's/# use -f here though/rm debian\/tmp\/usr\/lib\/aarch64-linux-gnu\/dri\/nouveau_drv_video.so \n	rm debian\/tmp\/usr\/lib\/aarch64-linux-gnu\/dri\/virtio_gpu_drv_video.so \n	# use -f here though\n/' debian/rules
+#sed -i 's/# use -f here though/rm debian\/tmp\/usr\/lib\/aarch64-linux-gnu\/dri\/nouveau_drv_video.so \n	rm debian\/tmp\/usr\/lib\/aarch64-linux-gnu\/dri\/virtio_gpu_drv_video.so \n	# use -f here though\n/' debian/rules
+# HAKO04
+sed -i 's|usr/share/drirc.d/;|usr/share/drirc.d/ 2>/dev/null \|\| true;|g' debian/rules
+
 
 echo "=== 3. debian/rules と指示書の書き換え (Panthor最適化) ==="
 # 【★これを追加★】エラーの原因になる他社用パッケージの指示書を、絶対に存在する「空のディレクトリ」の指定に書き換えます
