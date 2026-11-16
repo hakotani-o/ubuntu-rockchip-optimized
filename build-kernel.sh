@@ -77,7 +77,7 @@ make olddefconfig
 sed -i 's/CONFIG_LOCALVERSION="-ARCH"/CONFIG_LOCALVERSION=""/' .config
 cp .config /2-config.txt
 
-export KCFLAGS="-mcpu=cortex-a76.cortex-a55+crypto+dotprod+nosve -fno-plt"
+export KCFLAGS="-O2 -mcpu=cortex-a76.cortex-a55+crypto+dotprod+nosve -fno-plt"
 fakeroot make -j$(nproc) LOCALVERSION="-rockchip"  deb-pkg
 cd ..
 cp *.deb /
