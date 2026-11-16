@@ -20,7 +20,7 @@ wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/libdrm/2.4.134-3
 wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/libdrm/2.4.134-3~ubuntu0.26.04.1/libdrm_2.4.134-3~ubuntu0.26.04.1.dsc
 
 # 2. ソースコードの展開
-dpkg-source -x libdrm_2.4.134-3.dsc
+dpkg-source -x libdrm_2.4.134-3~ubuntu0.26.04.1.dsc
 
 # 3. ビルド依存関係（Build-Depends）の解決
 cd libdrm-2.4.134
@@ -104,7 +104,7 @@ wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/mesa/26.2.4-1ubu
 wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/mesa/26.2.4-1ubuntu1~26.04.1/mesa_26.2.4-1ubuntu1~26.04.1.dsc
 
 # 2. ソースコードの展開
-dpkg-source -x mesa_26.2.4-1.dsc
+dpkg-source -x mesa_26.2.4-1ubuntu1~26.04.1.dsc
 
 # 3. ビルド依存関係（Build-Depends）の解決
 cd mesa-26.2.4
