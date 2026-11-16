@@ -145,6 +145,7 @@ systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo /bin/bash -c "cd 
 rm -rf $1/kkk
 kernel_version="`ls -1 $1/boot/vmlinu?-*|sed 's#-# #g' | awk '{ print $2 }'|head -1`"
 echo "kernel_version=$kernel_version" > overlay/kernel_version
+cat overlay/kernel_version
 # install U-Boot
 systemd-nspawn -D $1 --resolv-conf=replace-host --as-pid2 sudo apt-get -y install u-boot-tools u-boot-menu
 
