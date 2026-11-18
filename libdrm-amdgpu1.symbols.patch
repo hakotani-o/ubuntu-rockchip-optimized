@@ -1,0 +1,13 @@
+--- debian/libdrm-amdgpu1.symbols (libdrm-amdgpu1_2.4.131-1_arm64)
++++ dpkg-gensymbolsblP1VV	2026-06-07 23:26:46.312434550 +0900
+@@ -83,7 +83,9 @@
+  amdgpu_va_get_start_addr@Base 2.4.119
+  amdgpu_va_manager_alloc@Base 2.4.121
+  amdgpu_va_manager_deinit@Base 2.4.121
++ amdgpu_va_manager_init2@Base 2.4.131-1
+  amdgpu_va_manager_init@Base 2.4.121
++ amdgpu_va_manager_query_sw_info@Base 2.4.131-1
+  amdgpu_va_range_alloc2@Base 2.4.121
+  amdgpu_va_range_alloc@Base 2.4.63
+  amdgpu_va_range_free@Base 2.4.63
+
