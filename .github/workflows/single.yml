@@ -73,7 +73,9 @@ jobs:
             ビルド日時: ${{ steps.date.outputs.now }}
             ベースカーネル: ${{ steps.kernel.outputs.kernel_version }}
             Mesa バージョン: ${{ steps.mesa.outputs.release_mesa_info }}
-            ### Kernel and Mesa Kernel upgrade 2026-11-17
+            Kernel and Mesa upgrade 2026-11-26
+            ---
+            ### Kernel and Mesa upgrade 2026-11-17
           draft: false
           prerelease: false
           # ここに圧縮済みファイルのパスを指定します
